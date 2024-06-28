@@ -1,0 +1,77 @@
+*:where(:not(audio, canvas, dialog, iframe, img, input[type="checkbox"], input[type="range"], option, select, svg, video):not(svg *, symbol *)) {
+	all: unset;
+	display: revert;
+	cursor: revert;
+}
+
+*,
+*:before, 
+*:after {
+	box-sizing: border-box;
+}
+
+body {
+	/*
+	https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json
+	https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_plus.json
+	https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_modern.json
+	*/
+	--colors-editor-background: #1E1E1E;
+	--colors-editor-foreground: #D4D4D4;
+	--tokenColors-keyword-foreground: #569cd6;
+	--semanticTokenColors-stringLiteral: #ce9178;
+	--semanticTokenColors-customLiteral: #DCDCAA;
+	--semanticTokenColors-numberLiteral: #b5cea8;
+
+	--padding: 8px;
+
+	padding: var(--padding);
+	background: var(--colors-editor-background);
+}
+
+.Terminal {
+	font-family: Menlo, Monaco, "Courier New", monospace;
+	font-kerning: none;
+	font-size: 13px;
+	color: var(--colors-editor-foreground);
+	width: 100%;
+	height: 100%;
+	line-height: 1em; /* fixes chinese characters */
+	white-space: pre-wrap;
+	word-break: break-all;
+
+	> .rows {
+		> .prompt {
+			.command {
+				color: var(--semanticTokenColors-customLiteral);
+			}
+
+			.arg {
+				color: var(--semanticTokenColors-stringLiteral);
+
+				&.modifier {
+					color: var(--tokenColors-keyword-foreground);
+				}
+
+				&.number {
+					color: var(--semanticTokenColors-numberLiteral);
+				}
+			}
+		}
+
+		> .element {
+			height: 250px;
+			display: inline-block;
+
+			> * {
+				height: 100%;
+			}
+		}
+	}
+
+	> .prompt {
+		.input {
+			display: inline;
+		}
+	}
+}

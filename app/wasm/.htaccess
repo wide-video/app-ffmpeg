@@ -1,0 +1,26 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{HTTP:Accept-encoding} br
+RewriteCond %{REQUEST_FILENAME}\.br -s
+RewriteRule ^(.*) $1\.br [QSA]
+
+RewriteRule \.js\.br$ - [T=text/javascript,E=no-gzip,E=no-brotli]
+RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
+
+<FilesMatch "(\.br)$">
+	Header set Content-Encoding br
+	Header append Vary Accept-Encoding
+</FilesMatch>
+
+#Generated extra
+<FilesMatch "(ffmpeg-gpl-simd-wv.js\.br)$">
+	Header set x-content-length 131992
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-simd.js\.br)$">
+	Header set x-content-length 131976
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-simd.worker.js\.br)$">
+	Header set x-content-length 2202
+</FilesMatch>

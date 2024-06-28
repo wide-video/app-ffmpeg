@@ -1,0 +1,11 @@
+Header set Access-Control-Allow-Headers *
+Header set Access-Control-Allow-Origin *
+Header set Access-Control-Expose-Headers *
+Header set Cache-Control "public, max-age=604800, s-maxage=604800, immutable"
+Header set Cross-Origin-Opener-Policy same-origin
+Header set Cross-Origin-Embedder-Policy require-corp
+
+RewriteEngine On
+
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=307,L]
