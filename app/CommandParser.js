@@ -32,6 +32,6 @@ export function parse(line) {
     if(!args.length)
         return;
 
-    const command = args.shift().toLowerCase();
+    const command = args.shift();
     return {line, command, args};
 }

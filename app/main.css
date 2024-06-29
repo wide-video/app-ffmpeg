@@ -59,12 +59,12 @@ body {
 			}
 		}
 
-		> .element {
-			height: 250px;
-			display: inline-block;
-
-			> * {
-				height: 100%;
+		> .embed {
+			> iframe {
+				border: none;
+				display: block;
+				width: 360px;
+				height: 250px;
 			}
 		}
 	}
