@@ -13,33 +13,25 @@ export class Terminal {
 
 		const input = this.input = DOM.span("input");
 		input.contentEditable = true;
-		input.onpaste = event => {
-			try {
-				const text = event.clipboardData.getData("text/plain");
-				const selection = window.getSelection();
-				if(!selection.rangeCount)
-					return;
-				selection.deleteFromDocument();
-				selection.getRangeAt(0).insertNode(document.createTextNode(text));
-				selection.collapseToEnd();
-				event.preventDefault();
-			} catch(error) {}
-		}
+		input.onpaste = HTMLUtil.pasteRaw;
+		input.oninput = HTMLUtil.scrollToBottom;
 
 		const prompt = this.prompt = DOM.div("prompt");
 		prompt.onkeydown = event => {
 			switch(event.key) {
 				case "ArrowUp":
-					if(!getSelection().anchorOffset) {
+					if(HTMLUtil.caretAtStart()) {
 						event.preventDefault();
-						input.textContent = history.get(-1);
+						input.textContent = history.move(-1);
+						HTMLUtil.scrollToBottom();
 					}
 					break;
 				case "ArrowDown":
-					if(getSelection().anchorOffset === input.innerHTML.length) {
+					if(HTMLUtil.caretAtEnd()) {
 						event.preventDefault();
-						input.textContent = history.get(1);
+						input.textContent = history.move(1);
 						HTMLUtil.caretToEnd(input);
+						HTMLUtil.scrollToBottom();
 					}
 					break;
 				case "Enter":
@@ -65,7 +57,7 @@ export class Terminal {
 		const {history, input} = this;
 		const line = input.textContent;
 		history.add(line);
-		this.execute(line);
+		this.execute(line, true);
 		input.textContent = "";
 	}
 
@@ -100,6 +92,6 @@ export class Terminal {
 		const isBottom = window.scrollY >= (body.scrollHeight - body.clientHeight - 10);
 		this.rows.append(row);
 		if(isBottom)
-			window.scrollTo(0, body.scrollHeight);
+			HTMLUtil.scrollToBottom();
 	}
 }

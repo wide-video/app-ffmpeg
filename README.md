@@ -2,13 +2,11 @@
 
 ## TODO
 
-- drag drop files
 - abort process
 - handle ffmpeg errors
 - style stderr vs stdout
 - complete with tab
-- `remove file`, `fetch`
-- scroll to bottom when writing in prompt creates new line
+- `remove file`, `fetch`, `about`, `man`, `saveas`
 
 ## Test
 

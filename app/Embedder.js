@@ -9,7 +9,7 @@ export class Embedder {
         const {fileSystem, terminal} = this.system;
         for(const filename of args) {
             const file = fileSystem.get(filename);
-            const iframe = DOM.create("iframe");
+            const iframe = DOM.create("iframe", "embed");
             iframe.src = URL.createObjectURL(file);
             iframe.onload = () => {
                 const style = DOM.create("style");
@@ -17,7 +17,7 @@ export class Embedder {
                 style.textContent = "img {max-width:100%; height:100%}";
                 iframe.contentDocument.body.append(style);
             }
-            terminal.write(iframe, "embed");
+            terminal.stdout(iframe);
         }
     }
 }

@@ -33,5 +33,5 @@ export function parse(line) {
         return;
 
     const command = args.shift();
-    return {line, command, args};
+    return {args, command};
 }

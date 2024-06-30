@@ -26,7 +26,7 @@ export class History {
         } catch(error) {}
     }
 
-    get(delta) {
+    move(delta) {
         const {index, list} = this;
         this.index = Math.min(Math.max(index + delta, 0), list.length);
         return list[this.index];

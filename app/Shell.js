@@ -3,7 +3,7 @@ import * as DOM from "./DOM.js";
 import { Embedder } from "./Embedder.js";
 import { FFmpeg } from "./FFmpeg.js";
 import { Open } from "./Open.js";
-import { PROMPT_PREFIX } from "./Terminal.js"
+import { PROMPT_PREFIX } from "./Terminal.js";
 import { Save } from "./Save.js";
 
 export class Shell {
@@ -15,29 +15,14 @@ export class Shell {
         this.save = new Save(system);
     }
 
-    async run(line) {
+    async run(line, printPrompt) {
         const {embedder, ffmpeg, open, save, system} = this;
         const {fileSystem, terminal} = system;
         const parsed = CommandParser.parse(line);
-        if(!parsed)
-            return terminal.write(`${PROMPT_PREFIX}${line}`, "prompt");
-    
+        if(printPrompt)
+                this.printLine(line, parsed, PROMPT_PREFIX);
+
         const {command, args} = parsed;
-        const commandElement = DOM.span("command");
-        commandElement.textContent = command;
-    
-        const lineElement = DOM.span();
-        lineElement.append(PROMPT_PREFIX, commandElement);
-        for(const arg of args) {
-            const element = DOM.span("arg");
-            if(!isNaN(Number(arg)))
-                element.classList.add("number");
-            else if(arg.startsWith("-"))
-                element.classList.add("modifier");
-            element.textContent = arg;
-            lineElement.append(" ", element);
-        };
-        terminal.write(lineElement, "prompt");
 
         try {
             switch(command.toLowerCase()) {
@@ -61,8 +46,30 @@ export class Shell {
     }
 
     runHistory() {
-        const {history, terminal} = this.system;
-        for(const line of history.getList())
-            terminal.stdout(line);
+        for(const line of this.system.history.getList())
+            this.printLine(line, CommandParser.parse(line));
+    }
+
+    printLine(line, parsed, prefix="") {
+        const terminal = this.system.terminal;
+        if(!parsed)
+            return terminal.stdout(`${prefix}${line}`);
+
+        const {args, command} = parsed;
+        const commandElement = DOM.span("command");
+        commandElement.textContent = command;
+    
+        const lineElement = DOM.span("prompt");
+        lineElement.append(prefix, commandElement);
+        for(const arg of args) {
+            const element = DOM.span("arg");
+            if(!isNaN(Number(arg)))
+                element.classList.add("number");
+            else if(arg.startsWith("-"))
+                element.classList.add("modifier");
+            element.textContent = arg;
+            lineElement.append(" ", element);
+        };
+        terminal.stdout(lineElement);
     }
 }

@@ -16,9 +16,19 @@ terminal.execute = shell.run.bind(shell);
 
 body.ondrop = event => {
 	event.preventDefault();
+    body.classList.remove("dragOver");
     const files = event.dataTransfer.files;
     fileSystem.add(files);
-    terminal.stdout(`added ${[...files].map(file => file.name).join(" ")}`);
+    terminal.stdout(`added ${files.length} files:`);
+    terminal.execute(`ls ${[...files].map(file => file.name).join(" ")}`, false);
 }
 
-body.ondragover = event => event.preventDefault();
+body.ondragleave = event => {
+    if(body === event.target)
+        body.classList.remove("dragOver"); 
+}
+
+body.ondragover = event => {
+    event.preventDefault();
+    body.classList.add("dragOver");
+}

@@ -22,8 +22,11 @@ export class FileSystem {
             this.map[file.name] = file;
     }
 
-    run() {
-        for(const file of this.list) {
+    run(args) {
+        let list = this.list;
+        if(args.length)
+            list = list.filter(({name}) => args.includes(name));
+        for(const file of list) {
             const line = `${file.size}`.padStart(9) + ` ${file.name}`;
             this.terminal.stdout(line);
         }
