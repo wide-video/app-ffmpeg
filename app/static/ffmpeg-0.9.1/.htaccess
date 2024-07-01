@@ -1,3 +1,10 @@
+Header set Access-Control-Allow-Headers *
+Header set Access-Control-Allow-Origin *
+Header set Access-Control-Expose-Headers *
+Header set Cache-Control "public, max-age=604800, s-maxage=604800, immutable"
+Header set Cross-Origin-Opener-Policy same-origin
+Header set Cross-Origin-Embedder-Policy require-corp
+
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -18,9 +25,9 @@ RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
 <FilesMatch "(ffmpeg-gpl-simd-wv.js\.br)$">
 	Header set x-content-length 131992
 </FilesMatch>
-<FilesMatch "(ffmpeg-gpl-simd.js\.br)$">
-	Header set x-content-length 131976
-</FilesMatch>
 <FilesMatch "(ffmpeg-gpl-simd.worker.js\.br)$">
 	Header set x-content-length 2202
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-simd.wasm\.br)$">
+	Header set x-content-length 38738336
 </FilesMatch>

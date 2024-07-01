@@ -1,7 +1,7 @@
-import { FileSystem } from "./FileSystem"
-import { History } from "./History"
-import { Shell } from "./Shell"
-import { Terminal } from "./Terminal"
+import { FileSystem } from "~util/FileSystem"
+import { History } from "~util/History"
+import { Shell } from "~util/Shell"
+import { Terminal } from "~util/Terminal"
 
 const body = document.body;
 

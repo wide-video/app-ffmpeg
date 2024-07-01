@@ -1,6 +1,8 @@
 const KEY = "history";
 const MAX = 50;
 
+export const COMMAND = "history";
+
 export class History {
 	private readonly list:string[];
 	private index:number;

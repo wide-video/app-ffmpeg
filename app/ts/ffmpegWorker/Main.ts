@@ -95,9 +95,10 @@ self.onmessage = async (event) => {
 
 function getTTYEntries(args:ReadonlyArray<string>) {
 	const result = [];
+	const prefix = `${TTY_DIR}/`;
 	for(const arg of args) {
-		if(arg.startsWith(`${TTY_DIR}/`)) {
-			const filename = arg.substring(5);
+		if(arg.startsWith(prefix)) {
+			const filename = arg.substring(prefix.length);
 			if(filename)
 				result.push({arg, filename});
 

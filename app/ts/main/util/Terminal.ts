@@ -1,9 +1,11 @@
-import { Command } from "type/Command";
-import * as DOM from "./DOM";
-import { History } from "./History";
-import * as HTMLUtil from "./HTMLUtil";
+import { Command } from "~type/Command";
+import * as DOM from "~util/DOM";
+import { History } from "~util/History";
+import * as HTMLUtil from "~util/HTMLUtil";
 
 export const PROMPT_PREFIX = "$ ";
+
+export const COMMAND_CLEAR = "clear";
 
 export class Terminal {
 	private readonly history:History;
@@ -64,7 +66,7 @@ export class Terminal {
 		if(!line)
 			return;
 		history.add(line);
-		this.execute(line, true);
+		this.execute(<Command>line, true);
 		input.textContent = "";
 	}
 

@@ -1,4 +1,7 @@
-import { Terminal } from "Terminal";
+import { Terminal } from "~util/Terminal";
+
+export const COMMAND_LS = "ls";
+export const COMMAND_RM = "rm";
 
 export class FileSystem {
 	private readonly terminal:Terminal;

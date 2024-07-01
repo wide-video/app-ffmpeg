@@ -1,15 +1,10 @@
 import * as Const from "common/Const";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
-import { System } from "type/System";
+import { Program } from "~program/Program";
+export const COMMAND = "ffmpeg";
 
-export class FFmpeg {
-	private readonly system:System;
-
-	constructor(system:System) {
-		this.system = system;
-	}
-
-	run(args:ReadonlyArray<string>) {
+export class FFmpeg extends Program {
+	override run(args:ReadonlyArray<string>) {
 		return new Promise<void>(async resolve => {
 			const {fileSystem, terminal} = this.system;
 			const dependencies = [Const.FFMPEG_JS_FILENAME, Const.FFMPEG_WORKER_FILENAME, Const.FFMPEG_WASM_FILENAME];
@@ -17,7 +12,7 @@ export class FFmpeg {
 				try {
 					fileSystem.get(dependency);
 				} catch(error) {
-					await terminal.execute(`fetch ${new URL(`wasm/${dependency}`, location.href).href}`);
+					await terminal.execute(`fetch ${new URL(`ffmpeg-${Const.FFMPEG_VERSION}/${dependency}`, location.href).href}`);
 				}
 
 			const worker = new Worker("./FFmpegWorker.js", {type:"module"});

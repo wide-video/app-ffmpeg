@@ -1,6 +1,6 @@
-import { FileSystem } from "FileSystem";
-import { History } from "History";
-import { Terminal } from "Terminal";
+import { FileSystem } from "~util/FileSystem";
+import { History } from "~util/History";
+import { Terminal } from "~util/Terminal";
 
 export type System = {
 	readonly fileSystem:FileSystem;

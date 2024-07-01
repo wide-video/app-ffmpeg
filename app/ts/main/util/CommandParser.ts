@@ -1,4 +1,4 @@
-import { ParsedCommand } from "type/ParsedCommand";
+import { ParsedCommand } from "~type/ParsedCommand";
 
 /*
 test:

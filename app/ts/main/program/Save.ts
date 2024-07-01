@@ -1,14 +1,10 @@
-import { System } from "type/System";
-import * as DOM from "./DOM";
+import * as DOM from "~util/DOM";
+import { Program } from "~program/Program";
 
-export class Save {
-	private readonly system:System;
+export const COMMAND = "save";
 
-	constructor(system:System) {
-		this.system = system;
-	}
-
-	async run(args:ReadonlyArray<string>) {
+export class Save extends Program {
+	override async run(args:ReadonlyArray<string>) {
 		const {fileSystem} = this.system;
 		for(const filename of args) {
 			const file = fileSystem.get(filename);

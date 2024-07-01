@@ -1,14 +1,10 @@
-import * as DOM from "./DOM";
-import { System } from "type/System";
+import * as DOM from "~util/DOM";
+import { Program } from "~program/Program";
 
-export class Embedder {
-	private readonly system:System;
+export const COMMAND = "embed";
 
-	constructor(system:System) {
-		this.system = system;
-	}
-
-	run(args:ReadonlyArray<string>) {
+export class Embed extends Program {
+	override run(args:ReadonlyArray<string>) {
 		const {fileSystem, terminal} = this.system;
 		for(const filename of args) {
 			const file = fileSystem.get(filename);
