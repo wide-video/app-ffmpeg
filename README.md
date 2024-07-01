@@ -3,7 +3,6 @@
 ## TODO
 
 - complete with tab
-- click on terminal to focus input
 - handle ffmpeg errors
 - style stderr vs stdout
 - `about`, `man`

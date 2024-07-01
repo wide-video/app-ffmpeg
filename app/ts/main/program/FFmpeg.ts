@@ -6,14 +6,14 @@ export const COMMAND = "ffmpeg";
 export class FFmpeg extends Program {
 	override run(args:ReadonlyArray<string>, signal:AbortSignal) {
 		return new Promise<void>(async (resolve, reject) => {
-			const {fileSystem, terminal} = this.system;
+			const {fileSystem, shell, terminal} = this.system;
 			const dependencies = [Const.FFMPEG_JS_FILENAME, Const.FFMPEG_WORKER_FILENAME, Const.FFMPEG_WASM_FILENAME];
 			for(const dependency of dependencies)
 				try {
 					fileSystem.get(dependency);
 				} catch(error) {
 					try {
-						await terminal.subprocess(`fetch ${new URL(`ffmpeg-${Const.FFMPEG_VERSION}/${dependency}`, location.href).href}`, signal);
+						await shell.subprocess(`fetch ${new URL(`ffmpeg-${Const.FFMPEG_VERSION}/${dependency}`, location.href).href}`, signal);
 					} catch(error) {
 						return reject(error);
 					}
@@ -52,7 +52,7 @@ export class FFmpeg extends Program {
 						const files = data.files;
 						worker.terminate();
 						fileSystem.add(files);
-						terminal.subprocess(`embed ${files.map(file => file.name).join(" ")}`, signal);
+						shell.subprocess(`embed ${files.map(file => file.name).join(" ")}`, signal);
 						resolve();
 						break;
 					}

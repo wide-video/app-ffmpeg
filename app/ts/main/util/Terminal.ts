@@ -2,41 +2,37 @@ import { Command } from "~type/Command";
 import * as DOM from "~util/DOM";
 import { History } from "~util/History";
 import * as HTMLUtil from "~util/HTMLUtil";
+import { ITerminal } from "~type/ITerminal";
 
 export const PROMPT_PREFIX = "$ ";
 export const COMMAND_CLEAR = "clear";
 
-export class Terminal {
-	private readonly history:History;
-	private readonly rows = DOM.div("rows");
+export class Terminal implements ITerminal {
+	readonly history = new History();
+	readonly root = DOM.div("Terminal");
+
+	private readonly log = DOM.div("log");
 	private readonly input = DOM.span("input");
 	private readonly prompt = DOM.div("prompt");
-	readonly container = DOM.div("Terminal");
 
-	constructor(history:History) {
-		this.history = history;
-		const {container, input, prompt, rows} = this;
+	private kill = ():void => {throw "Not Implemented"}
+	private execute = (_command:Command, _controller:AbortController, _printPrompt?:boolean):Promise<void> => {throw "Not Implemented"}
+
+	constructor() {
+		const {input, log, prompt, root} = this;
 
 		input.contentEditable = "true";
-		input.onpaste = HTMLUtil.pasteRaw;
-		input.oninput = HTMLUtil.scrollToBottom;
-		input.onkeydown = this.onInputKeyDown.bind(this);
+		input.addEventListener("paste", HTMLUtil.pasteRaw);
+		input.addEventListener("input", HTMLUtil.scrollToBottom);
+		input.addEventListener("keydown", this.onInputKeyDown.bind(this));
 		prompt.append(PROMPT_PREFIX, input);
-		container.append(rows, prompt);
-
-		document.body.addEventListener("click", this.onBodyClick.bind(this));
+		root.append(log, prompt);
+		root.addEventListener("mouseup", this.onRootMouseUp.bind(this));
 	}
 
-	execute(_command:Command, _controller:AbortController, _printPrompt?:boolean):Promise<any> {
-		throw "Not implemented";
-	}
-
-	subprocess(_command:Command, _signal:AbortSignal, _printPrompt?:boolean):Promise<any> {
-		throw "Not implemented"
-	}
-
-	kill() {
-		throw "Not implemented";
+	init(execute:typeof this.execute, kill:typeof this.kill) {
+		this.execute = execute;
+		this.kill = kill;
 	}
 
 	focus() {
@@ -44,11 +40,11 @@ export class Terminal {
 	}
 
 	clear() {
-		this.rows.replaceChildren();
+		this.log.replaceChildren();
 	}
 
 	clearLine() {
-		this.rows.lastChild?.remove();
+		this.log.lastChild?.remove();
 	}
 
 	stdout(line:string | Element) {
@@ -78,7 +74,7 @@ export class Terminal {
 		
 		const body = document.body;
 		const isBottom = window.scrollY >= (body.scrollHeight - body.clientHeight - 10);
-		this.rows.append(row);
+		this.log.append(row);
 		if(isBottom)
 			HTMLUtil.scrollToBottom();
 	}
@@ -112,10 +108,9 @@ export class Terminal {
 		}
 	}
 
-	private onBodyClick(event:MouseEvent) {
-		const rows = this.rows;
-		const target = event.target;
-		if(target instanceof Node && rows !== target && !rows.contains(target))
+	private onRootMouseUp(event:MouseEvent) {
+		event.stopPropagation();
+		if(getSelection()?.type === "Caret")
 			this.focus();
 	}
 }

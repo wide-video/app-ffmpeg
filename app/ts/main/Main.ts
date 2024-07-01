@@ -1,38 +1,32 @@
-import { FileSystem } from "~util/FileSystem"
-import { History } from "~util/History"
 import { Shell } from "~util/Shell"
 import { Terminal } from "~util/Terminal"
 
 const body = document.body;
-
-const history = new History();
-const terminal = new Terminal(history);
-const fileSystem = new FileSystem(terminal);
-const shell = new Shell({fileSystem, history, terminal});
+const terminal = new Terminal();
+const shell = new Shell(terminal);
 
 body.append(terminal.container);
-terminal.execute = shell.run.bind(shell);
-terminal.subprocess = shell.run.bind(shell);
-terminal.kill = shell.kill.bind(shell);
 terminal.focus();
 
-body.ondrop = event => {
+body.addEventListener("drop", event => {
 	event.preventDefault();
 	body.classList.remove("dragOver");
 	const files = event.dataTransfer?.files;
 	if(files?.length) {
-		fileSystem.add(files);
+		shell.system.fileSystem.add(files);
 		terminal.stdout(`Added ${files.length} files:`);
-		terminal.execute(`ls ${[...files].map(file => file.name).join(" ")}`, new AbortController(), false);
+		shell.process(`ls ${[...files].map(file => file.name).join(" ")}`, new AbortController(), false);
 	}
-}
+})
 
-body.ondragleave = event => {
+body.addEventListener("dragleave", event => {
 	if(body === event.target)
 		body.classList.remove("dragOver"); 
-}
+})
 
-body.ondragover = event => {
+body.addEventListener("dragover", event => {
 	event.preventDefault();
 	body.classList.add("dragOver");
-}
+})
+
+body.addEventListener("mouseup", terminal.focus.bind(terminal));

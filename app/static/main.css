@@ -46,7 +46,7 @@ body {
 	white-space: pre-wrap;
 	word-break: break-all;
 
-	> .rows {
+	> .log {
 		> .stdout {
 			> .prompt {
 				> .command {

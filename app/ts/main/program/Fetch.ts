@@ -5,7 +5,7 @@ export const COMMAND = "fetch";
 
 export class Fetch extends Program {
 	override async run(args:ReadonlyArray<string>, signal:AbortSignal) {
-		const {fileSystem, terminal} = this.system;
+		const {fileSystem, shell, terminal} = this.system;
 		const [url, filename] = args;
 		if(!url)
 			throw `Missing url`;
@@ -39,7 +39,7 @@ export class Fetch extends Program {
 			const file = new File([blob], name, type ? {type} : undefined);
 			fileSystem.add([file]);
 			terminal.stdout("Fetched 1 file:");
-			terminal.subprocess(`ls ${name}`, signal, false);
+			shell.subprocess(`ls ${name}`, signal);
 		} catch(error) {
 			signal.throwIfAborted();
 			throw error;

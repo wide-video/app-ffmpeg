@@ -10,11 +10,11 @@ export class Embed extends Program {
 			const file = fileSystem.get(filename);
 			const iframe = DOM.iframe("embed");
 			iframe.src = URL.createObjectURL(file);
-			iframe.onload = () => {
+			iframe.addEventListener("load", () => {
 				const style = DOM.style();
 				style.textContent = "img {max-width:100%; height:100%}";
 				iframe.contentDocument?.body.append(style);
-			}
+			});
 			terminal.stdout(iframe);
 		}
 	}
