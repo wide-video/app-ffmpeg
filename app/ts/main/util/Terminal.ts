@@ -4,7 +4,6 @@ import { History } from "~util/History";
 import * as HTMLUtil from "~util/HTMLUtil";
 
 export const PROMPT_PREFIX = "$ ";
-
 export const COMMAND_CLEAR = "clear";
 
 export class Terminal {
@@ -21,53 +20,23 @@ export class Terminal {
 		input.contentEditable = "true";
 		input.onpaste = HTMLUtil.pasteRaw;
 		input.oninput = HTMLUtil.scrollToBottom;
-
-		prompt.onkeydown = event => {
-			switch(event.key) {
-				case "ArrowUp":
-					if(HTMLUtil.caretAtStart()) {
-						event.preventDefault();
-						input.textContent = history.move(-1) ?? "";
-						HTMLUtil.scrollToBottom();
-					}
-					break;
-				case "ArrowDown":
-					if(HTMLUtil.caretAtEnd()) {
-						event.preventDefault();
-						input.textContent = history.move(1) ?? "";
-						HTMLUtil.caretToEnd(input);
-						HTMLUtil.scrollToBottom();
-					}
-					break;
-				case "Enter":
-					event.preventDefault();
-					this.submit();
-					break;
-			}
-		}
+		input.onkeydown = this.onInputKeyDown.bind(this);
 		prompt.append(PROMPT_PREFIX, input);
 		container.append(rows, prompt);
 
-		document.body.addEventListener("click", event => {
-			const rows = this.rows;
-			const target = event.target;
-			if(target instanceof Node && rows !== target && !rows.contains(target))
-				this.focus();
-		})
+		document.body.addEventListener("click", this.onBodyClick.bind(this));
 	}
 
-	execute (_command:Command, _printPrompt?:boolean):Promise<any> {
-		throw "Not implemented;"
+	execute(_command:Command, _controller:AbortController, _printPrompt?:boolean):Promise<any> {
+		throw "Not implemented";
 	}
 
-	submit() {
-		const {history, input} = this;
-		const line = input.textContent;
-		if(!line)
-			return;
-		history.add(line);
-		this.execute(<Command>line, true);
-		input.textContent = "";
+	subprocess(_command:Command, _signal:AbortSignal, _printPrompt?:boolean):Promise<any> {
+		throw "Not implemented"
+	}
+
+	kill() {
+		throw "Not implemented";
 	}
 
 	focus() {
@@ -90,7 +59,17 @@ export class Terminal {
 		this.write(line, "stderr");
 	}
 
-	private write(line:string | Element, type:string) {
+	private submit() {
+		const {history, input} = this;
+		const line = input.textContent;
+		if(!line)
+			return;
+		history.add(line);
+		this.execute(<Command>line, new AbortController(), true).catch(() => {});
+		input.textContent = "";
+	}
+
+	private write(line:string | Element, type:"stdout" | "stderr") {
 		const row = DOM.div(type);
 		if(line instanceof Element)
 			row.append(line);
@@ -102,5 +81,41 @@ export class Terminal {
 		this.rows.append(row);
 		if(isBottom)
 			HTMLUtil.scrollToBottom();
+	}
+
+	private onInputKeyDown(event:KeyboardEvent) {
+		const {history, input} = this;
+		switch(event.key) {
+			case "ArrowUp":
+				if(HTMLUtil.caretAtStart()) {
+					event.preventDefault();
+					input.textContent = history.move(-1) ?? "";
+					HTMLUtil.scrollToBottom();
+				}
+				break;
+			case "ArrowDown":
+				if(HTMLUtil.caretAtEnd()) {
+					event.preventDefault();
+					input.textContent = history.move(1) ?? "";
+					HTMLUtil.caretToEnd(input);
+					HTMLUtil.scrollToBottom();
+				}
+				break;
+			case "c":
+				if(event.ctrlKey)
+					this.kill();
+				break;
+			case "Enter":
+				event.preventDefault();
+				this.submit();
+				break;
+		}
+	}
+
+	private onBodyClick(event:MouseEvent) {
+		const rows = this.rows;
+		const target = event.target;
+		if(target instanceof Node && rows !== target && !rows.contains(target))
+			this.focus();
 	}
 }

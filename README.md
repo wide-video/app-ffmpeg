@@ -2,7 +2,6 @@
 
 ## TODO
 
-- abort process
 - complete with tab
 - click on terminal to focus input
 - handle ffmpeg errors

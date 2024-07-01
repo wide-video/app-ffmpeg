@@ -7,7 +7,7 @@ export abstract class Program {
 		this.system = system;
 	}
 
-	run(_args:ReadonlyArray<string>):void | Promise<void> {
+	run(_args:ReadonlyArray<string>, _signal:AbortSignal):void | Promise<void> {
 		throw "Program not implemented";
 	}
 }

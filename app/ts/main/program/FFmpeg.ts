@@ -4,18 +4,26 @@ import { Program } from "~program/Program";
 export const COMMAND = "ffmpeg";
 
 export class FFmpeg extends Program {
-	override run(args:ReadonlyArray<string>) {
-		return new Promise<void>(async resolve => {
+	override run(args:ReadonlyArray<string>, signal:AbortSignal) {
+		return new Promise<void>(async (resolve, reject) => {
 			const {fileSystem, terminal} = this.system;
 			const dependencies = [Const.FFMPEG_JS_FILENAME, Const.FFMPEG_WORKER_FILENAME, Const.FFMPEG_WASM_FILENAME];
 			for(const dependency of dependencies)
 				try {
 					fileSystem.get(dependency);
 				} catch(error) {
-					await terminal.execute(`fetch ${new URL(`ffmpeg-${Const.FFMPEG_VERSION}/${dependency}`, location.href).href}`);
+					try {
+						await terminal.subprocess(`fetch ${new URL(`ffmpeg-${Const.FFMPEG_VERSION}/${dependency}`, location.href).href}`, signal);
+					} catch(error) {
+						return reject(error);
+					}
 				}
 
 			const worker = new Worker("./FFmpegWorker.js", {type:"module"});
+			signal.addEventListener("abort", () => {
+				worker.terminate();
+				reject(signal.reason);
+			})
 			const decoder = new TextDecoder("utf8");
 			const buffers = {stderr:"", stdout:""};
 			worker.onmessage = event => {
@@ -44,7 +52,7 @@ export class FFmpeg extends Program {
 						const files = data.files;
 						worker.terminate();
 						fileSystem.add(files);
-						terminal.execute(`embed ${files.map(file => file.name).join(" ")}`);
+						terminal.subprocess(`embed ${files.map(file => file.name).join(" ")}`, signal);
 						resolve();
 						break;
 					}

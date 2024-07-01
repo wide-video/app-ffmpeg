@@ -1,5 +1,6 @@
 import { COMMAND as HistoryCommand } from "~util/History";
 import { COMMAND_CLEAR as ClearCommand } from "~util/Terminal";
+import { Command } from "~type/Command";
 import * as CommandParser from "~util/CommandParser"
 import * as DOM from "~util/DOM";
 import { Embed, COMMAND as EmbedCommand } from "~program/Embed";
@@ -14,6 +15,8 @@ import { System } from "~type/System";
 import { ParsedCommand } from "~type/ParsedCommand";
 
 export class Shell {
+	private controller:AbortController | undefined;
+
 	private readonly system:System;
 	private readonly embed:Embed;
 	private readonly fetch:Fetch;
@@ -32,7 +35,12 @@ export class Shell {
 		this.save = new Save(system);
 	}
 
-	async run(line:string, printPrompt?:boolean) {
+	kill() {
+		this.controller?.abort("The terminal process terminated with exit code: 1.");
+		this.controller = undefined;
+	}
+
+	async run(line:Command, controllerOrSignal:AbortController | AbortSignal, printPrompt?:boolean) {
 		const {embed, fetch, ffmpeg, help, open, save, system} = this;
 		const {fileSystem, terminal} = system;
 		const parsed = CommandParser.parse(line);
@@ -43,12 +51,16 @@ export class Shell {
 			throw "Invalid command";
 		
 		const {command, args} = parsed;
+		const controller = controllerOrSignal instanceof AbortController ? controllerOrSignal : undefined;
+		const signal = controllerOrSignal instanceof AbortController ? controllerOrSignal.signal : controllerOrSignal;
+		if(controller)
+			this.controller = controller;
 		try {
 			switch(command.toLowerCase()) {
 				case ClearCommand: return terminal.clear();
 				case EmbedCommand: return embed.run(args);
-				case FetchCommand: return await fetch.run(args);
-				case FFmpegCommand: return await ffmpeg.run(args);
+				case FetchCommand: return await fetch.run(args, signal);
+				case FFmpegCommand: return await ffmpeg.run(args, signal);
 				case HelpCommand: return help.run(args);
 				case HistoryCommand: return this.runHistory();
 				case FileSystem.COMMAND_LS: return fileSystem.runLS(args);
@@ -58,16 +70,22 @@ export class Shell {
 			}
 			throw `Command not found: ${command}`;
 		} catch(error) {
-			terminal.stderr(`${error}`);
+			// subprocesses bubbles the same exceptions up, but we only log it once
+			if(controller)
+				terminal.stderr(`${error}`);
+			throw error;
+		} finally {
+			if(controller === this.controller)
+				this.controller = undefined;
 		}
 	}
 
-	runHistory() {
+	private runHistory() {
 		for(const line of this.system.history.getList())
 			this.printLine(line, CommandParser.parse(line));
 	}
 
-	printLine(line:string, parsed:ParsedCommand | undefined, prefix="") {
+	private printLine(line:string, parsed:ParsedCommand | undefined, prefix="") {
 		const terminal = this.system.terminal;
 		if(!parsed)
 			return terminal.stdout(`${prefix}${line}`);

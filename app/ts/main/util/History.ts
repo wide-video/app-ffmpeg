@@ -16,7 +16,7 @@ export class History {
 		this.index = this.list.length;
 	}
 
-	getList() {
+	getList():ReadonlyArray<string> {
 		return this.list;
 	}
 

@@ -11,8 +11,10 @@ const fileSystem = new FileSystem(terminal);
 const shell = new Shell({fileSystem, history, terminal});
 
 body.append(terminal.container);
-terminal.focus();
 terminal.execute = shell.run.bind(shell);
+terminal.subprocess = shell.run.bind(shell);
+terminal.kill = shell.kill.bind(shell);
+terminal.focus();
 
 body.ondrop = event => {
 	event.preventDefault();
@@ -21,7 +23,7 @@ body.ondrop = event => {
 	if(files?.length) {
 		fileSystem.add(files);
 		terminal.stdout(`Added ${files.length} files:`);
-		terminal.execute(`ls ${[...files].map(file => file.name).join(" ")}`, false);
+		terminal.execute(`ls ${[...files].map(file => file.name).join(" ")}`, new AbortController(), false);
 	}
 }
 
