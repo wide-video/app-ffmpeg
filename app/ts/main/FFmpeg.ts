@@ -1,26 +1,30 @@
-import * as Const from "./Const.js";
+import * as Const from "common/Const";
+import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
+import { System } from "type/System";
 
 export class FFmpeg {
-	constructor(system) {
+	private readonly system:System;
+
+	constructor(system:System) {
 		this.system = system;
 	}
 
-	run(args) {
-		return new Promise(async resolve => {
+	run(args:ReadonlyArray<string>) {
+		return new Promise<void>(async resolve => {
 			const {fileSystem, terminal} = this.system;
 			const dependencies = [Const.FFMPEG_JS_FILENAME, Const.FFMPEG_WORKER_FILENAME, Const.FFMPEG_WASM_FILENAME];
 			for(const dependency of dependencies)
 				try {
 					fileSystem.get(dependency);
 				} catch(error) {
-					await terminal.execute(`fetch ${new URL(`wasm/${dependency}`, document.location).href}`);
+					await terminal.execute(`fetch ${new URL(`wasm/${dependency}`, location.href).href}`);
 				}
 
 			const worker = new Worker("./FFmpegWorker.js", {type:"module"});
 			const decoder = new TextDecoder("utf8");
 			const buffers = {stderr:"", stdout:""};
 			worker.onmessage = event => {
-				const data = event.data;
+				const data = event.data as FFmpegWorkerOut;
 				const kind = data.kind;
 				switch(kind) {
 					case "stderr":
@@ -41,13 +45,14 @@ export class FFmpeg {
 						}
 						break;
 					}
-					case "onExit":
+					case "onExit": {
 						const files = data.files;
 						worker.terminate();
 						fileSystem.add(files);
 						terminal.execute(`embed ${files.map(file => file.name).join(" ")}`);
 						resolve();
-						break;                    
+						break;
+					}
 				}
 			}
 

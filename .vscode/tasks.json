@@ -1,0 +1,30 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Debug",
+			"type": "shell",
+			"command": "node ./build/esbuild.js --watch",
+			"problemMatcher": ["$esbuild-watch"],
+			"group": "build",
+		},
+		{
+			"label": "Lint main",
+			"type": "shell",
+			"command": "npx eslint --parser-options=project:./app/ts/main/tsconfig.json --ext .ts app/ts/main",
+			"group": "build"
+		},
+		{
+			"label": "Lint ffmpegWorker",
+			"type": "shell",
+			"command": "npx eslint --parser-options=project:./app/ts/ffmpegWorker/tsconfig.json --ext .ts app/ts/ffmpegWorker",
+			"group": "build"
+		},
+		{
+			"label": "Start server",
+			"type": "shell",
+			"command": "node server/start.js",
+			"group": "build"
+		}
+	]
+}

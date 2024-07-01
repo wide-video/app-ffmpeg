@@ -1,0 +1,24 @@
+{
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"plugins": [
+		"@typescript-eslint"
+	],
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"rules": {
+		"no-async-promise-executor": "off",
+		"no-constant-condition": ["error", {"checkLoops": false}],
+		"no-empty": ["error", {"allowEmptyCatch": true}],
+		"no-fallthrough": "off",
+		"@typescript-eslint/await-thenable": "error",
+		"@typescript-eslint/ban-ts-comment": "off",
+		"@typescript-eslint/no-empty-function": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-non-null-assertion": "off",
+		"@typescript-eslint/no-unused-vars": "off",
+		"@typescript-eslint/require-await": "error"
+	}
+}

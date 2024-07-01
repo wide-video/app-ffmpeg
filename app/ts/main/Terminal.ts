@@ -1,35 +1,38 @@
-import * as DOM from "./DOM.js";
-import * as HTMLUtil from "./HTMLUtil.js";
+import { Command } from "type/Command";
+import * as DOM from "./DOM";
+import { History } from "./History";
+import * as HTMLUtil from "./HTMLUtil";
 
 export const PROMPT_PREFIX = "$ ";
 
 export class Terminal {
-	execute = () => {};
+	private readonly history:History;
+	private readonly rows = DOM.div("rows");
+	private readonly input = DOM.span("input");
+	private readonly prompt = DOM.div("prompt");
+	readonly container = DOM.div("Terminal");
 
-	constructor(history) {
+	constructor(history:History) {
 		this.history = history;
+		const {container, input, prompt, rows} = this;
 
-		const rows = this.rows = DOM.div("rows");
-
-		const input = this.input = DOM.span("input");
-		input.contentEditable = true;
+		input.contentEditable = "true";
 		input.onpaste = HTMLUtil.pasteRaw;
 		input.oninput = HTMLUtil.scrollToBottom;
 
-		const prompt = this.prompt = DOM.div("prompt");
 		prompt.onkeydown = event => {
 			switch(event.key) {
 				case "ArrowUp":
 					if(HTMLUtil.caretAtStart()) {
 						event.preventDefault();
-						input.textContent = history.move(-1);
+						input.textContent = history.move(-1) ?? "";
 						HTMLUtil.scrollToBottom();
 					}
 					break;
 				case "ArrowDown":
 					if(HTMLUtil.caretAtEnd()) {
 						event.preventDefault();
-						input.textContent = history.move(1);
+						input.textContent = history.move(1) ?? "";
 						HTMLUtil.caretToEnd(input);
 						HTMLUtil.scrollToBottom();
 					}
@@ -41,21 +44,25 @@ export class Terminal {
 			}
 		}
 		prompt.append(PROMPT_PREFIX, input);
-
-		const container = this.container = DOM.div("Terminal");
 		container.append(rows, prompt);
 
 		document.body.addEventListener("click", event => {
 			const rows = this.rows;
 			const target = event.target;
-			if(rows !== target && !rows.contains(target))
+			if(target instanceof Node && rows !== target && !rows.contains(target))
 				this.focus();
 		})
+	}
+
+	execute (_command:Command, _printPrompt?:boolean):Promise<any> {
+		throw "Not implemented;"
 	}
 
 	submit() {
 		const {history, input} = this;
 		const line = input.textContent;
+		if(!line)
+			return;
 		history.add(line);
 		this.execute(line, true);
 		input.textContent = "";
@@ -73,15 +80,15 @@ export class Terminal {
 		this.rows.lastChild?.remove();
 	}
 
-	stdout(line) {
+	stdout(line:string | Element) {
 		this.write(line, "stdout");
 	}
 
-	stderr(line) {
+	stderr(line:string | Element) {
 		this.write(line, "stderr");
 	}
 
-	write(line, type) {
+	private write(line:string | Element, type:string) {
 		const row = DOM.div(type);
 		if(line instanceof Element)
 			row.append(line);
