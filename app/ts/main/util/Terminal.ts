@@ -1,14 +1,16 @@
+import * as AutoComplete from "~util/AutoComplete";
 import { Command } from "~type/Command";
 import * as DOM from "~util/DOM";
+import { FileSystem } from "~util/FileSystem";
 import { History } from "~util/History";
 import * as HTMLUtil from "~util/HTMLUtil";
 import { ITerminal } from "~type/ITerminal";
 
-export const PROMPT_PREFIX = "$ ";
-export const COMMAND_CLEAR = "clear";
-
 export class Terminal implements ITerminal {
+	readonly prefix = "$ ";
 	readonly history = new History();
+	readonly fileSystem:FileSystem;
+	
 	readonly root = DOM.div("Terminal");
 
 	private readonly log = DOM.div("log");
@@ -16,16 +18,18 @@ export class Terminal implements ITerminal {
 	private readonly prompt = DOM.div("prompt");
 
 	private kill = ():void => {throw "Not Implemented"}
-	private execute = (_command:Command, _controller:AbortController, _printPrompt?:boolean):Promise<void> => {throw "Not Implemented"}
+	private execute = (_command:Command):Promise<void> => {throw "Not Implemented"}
 
 	constructor() {
-		const {input, log, prompt, root} = this;
+		const {input, log, prefix, prompt, root} = this;
+
+		this.fileSystem = new FileSystem(this);
 
 		input.contentEditable = "true";
 		input.addEventListener("paste", HTMLUtil.pasteRaw);
 		input.addEventListener("input", HTMLUtil.scrollToBottom);
 		input.addEventListener("keydown", this.onInputKeyDown.bind(this));
-		prompt.append(PROMPT_PREFIX, input);
+		prompt.append(prefix, input);
 		root.append(log, prompt);
 		root.addEventListener("mouseup", this.onRootMouseUp.bind(this));
 	}
@@ -57,11 +61,11 @@ export class Terminal implements ITerminal {
 
 	private submit() {
 		const {history, input} = this;
-		const line = input.textContent;
-		if(!line)
+		const command = input.textContent;
+		if(!command)
 			return;
-		history.add(line);
-		this.execute(<Command>line, new AbortController(), true).catch(() => {});
+		history.add(command);
+		this.execute(<Command>command).catch(() => {});
 		input.textContent = "";
 	}
 
@@ -80,7 +84,7 @@ export class Terminal implements ITerminal {
 	}
 
 	private onInputKeyDown(event:KeyboardEvent) {
-		const {history, input} = this;
+		const {fileSystem, history, input} = this;
 		switch(event.key) {
 			case "ArrowUp":
 				if(HTMLUtil.caretAtStart()) {
@@ -105,6 +109,9 @@ export class Terminal implements ITerminal {
 				event.preventDefault();
 				this.submit();
 				break;
+			case "Tab":
+				event.preventDefault();
+				AutoComplete.complete(input, fileSystem);
 		}
 	}
 

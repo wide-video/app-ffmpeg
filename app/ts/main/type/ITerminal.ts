@@ -1,6 +1,7 @@
 import { History } from "~util/History";
 
 export type ITerminal = {
+	readonly prefix:string;
 	readonly history:History;
 	readonly clear:() => void;
 	readonly clearLine:() => void;

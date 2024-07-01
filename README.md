@@ -2,9 +2,8 @@
 
 ## TODO
 
-- complete with tab
+- disable prompt when running program
 - handle ffmpeg errors
-- style stderr vs stdout
 - `about`, `man`
 - embed as iframe
 

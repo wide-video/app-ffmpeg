@@ -5,14 +5,14 @@ test:
   aFa  "bbb  ccc" 'ddd  eee'  -123	  456 č中文 8 \
  a bb  c
 */
-export function parse(line:string):ParsedCommand | undefined {
+export function parse(command:string):ParsedCommand | undefined {
 	let singleQuoteOpen = false;
 	let doubleQuoteOpen = false;
 	let buffer = "";
 	const args = [];
-	const length = line.length;
+	const length = command.length;
 	for(let i = 0; i < length; i++) {
-		const token = line[i];
+		const token = command[i];
 		if(!doubleQuoteOpen && token === "'") {
 			singleQuoteOpen = !singleQuoteOpen;
 		} else if(!singleQuoteOpen && token === '"') {
@@ -34,6 +34,6 @@ export function parse(line:string):ParsedCommand | undefined {
 	if(!args.length)
 		return;
 
-	const command = args.shift()!;
-	return {args, command};
+	const program = args.shift()!;
+	return {args, program};
 }

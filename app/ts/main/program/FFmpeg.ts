@@ -1,9 +1,13 @@
 import * as Const from "common/Const";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
 import { Program } from "~program/Program";
-export const COMMAND = "ffmpeg";
+import { System } from "~type/System";
 
 export class FFmpeg extends Program {
+	constructor(system:System) {
+		super("ffmpeg", system);
+	}
+
 	override run(args:ReadonlyArray<string>, signal:AbortSignal) {
 		return new Promise<void>(async (resolve, reject) => {
 			const {fileSystem, shell, terminal} = this.system;

@@ -1,8 +1,6 @@
 const KEY = "history";
 const MAX = 50;
 
-export const COMMAND = "history";
-
 export class History {
 	private readonly list:string[];
 	private index:number;
@@ -20,9 +18,9 @@ export class History {
 		return this.list;
 	}
 
-	add(line:string) {
+	add(command:string) {
 		const list = this.list;
-		list.push(line);
+		list.push(command);
 		if(list.length > MAX)
 			list.splice(0, list.length - MAX);
 		this.index = list.length;

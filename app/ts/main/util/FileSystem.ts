@@ -1,13 +1,10 @@
-import { Terminal } from "~util/Terminal";
-
-export const COMMAND_LS = "ls";
-export const COMMAND_RM = "rm";
+import { ITerminal } from "~type/ITerminal";
 
 export class FileSystem {
-	private readonly terminal:Terminal;
+	private readonly terminal:ITerminal;
 	private readonly map:Record<string, File> = {};
 
-	constructor(terminal:Terminal) {
+	constructor(terminal:ITerminal) {
 		this.terminal = terminal;
 	}
 
@@ -32,8 +29,7 @@ export class FileSystem {
 		if(args.length)
 			list = list.filter(({name}) => args.includes(name));
 		for(const file of list) {
-			const line = `${file.size}`.padStart(9) + ` ${file.name}`;
-			this.terminal.stdout(line);
+			this.terminal.stdout(`${file.size}`.padStart(9) + ` ${file.name}`);
 		}
 	}
 

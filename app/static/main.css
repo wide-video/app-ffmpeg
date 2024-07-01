@@ -13,9 +13,9 @@
 body {
 	--background: #1E1E1E;
 	--color: #D4D4D4;
-	--color-prompt-arg-modifier: #569cd6;
+	--color-prompt-program: #DCDCAA;
 	--color-prompt-arg: #ce9178;
-	--color-prompt-command: #DCDCAA;
+	--color-prompt-arg-modifier: #569cd6;
 	--color-prompt-arg-number: #b5cea8;
 
 	--padding: 8px;
@@ -49,8 +49,8 @@ body {
 	> .log {
 		> .stdout {
 			> .prompt {
-				> .command {
-					color: var(--color-prompt-command);
+				> .program {
+					color: var(--color-prompt-program);
 				}
 
 				> .arg {

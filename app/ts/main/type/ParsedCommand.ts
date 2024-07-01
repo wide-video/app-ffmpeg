@@ -1,4 +1,4 @@
 export type ParsedCommand = {
-	readonly command:string;
+	readonly program:string;
 	readonly args:ReadonlyArray<string>;
 }

@@ -1,9 +1,12 @@
 import * as ContentType from "common/ContentType"
 import { Program } from "~program/Program";
-
-export const COMMAND = "fetch";
+import { System } from "~type/System";
 
 export class Fetch extends Program {
+	constructor(system:System) {
+		super("fetch", system);
+	}
+
 	override async run(args:ReadonlyArray<string>, signal:AbortSignal) {
 		const {fileSystem, shell, terminal} = this.system;
 		const [url, filename] = args;

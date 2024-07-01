@@ -1,9 +1,12 @@
 import * as DOM from "~util/DOM";
 import { Program } from "~program/Program";
-
-export const COMMAND = "embed";
+import { System } from "~type/System";
 
 export class Embed extends Program {
+	constructor(system:System) {
+		super("embed", system);
+	}
+
 	override run(args:ReadonlyArray<string>) {
 		const {fileSystem, terminal} = this.system;
 		for(const filename of args) {

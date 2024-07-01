@@ -18,6 +18,18 @@ export function caretToEnd(node:Node) {
 	selection?.addRange(range);
 }
 
+export function caretToPosition(node:Node, position:number) {
+	try {
+		const range = document.createRange();
+		range.setEnd(node.childNodes[0]!, position);
+		range.collapse();
+		
+		const selection = getSelection();
+		selection?.removeAllRanges();
+		selection?.addRange(range);
+	} catch(error) {}
+}
+
 export function pasteRaw(event:ClipboardEvent) {
 	try {
 		const {clipboardData} = event;

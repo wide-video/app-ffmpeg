@@ -1,9 +1,12 @@
 import * as DOM from "~util/DOM";
 import { Program } from "~program/Program";
-
-export const COMMAND = "save";
+import { System } from "~type/System";
 
 export class Save extends Program {
+	constructor(system:System) {
+		super("save", system);
+	}
+
 	override async run(args:ReadonlyArray<string>) {
 		const {fileSystem} = this.system;
 		for(const filename of args) {

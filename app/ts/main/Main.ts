@@ -5,7 +5,7 @@ const body = document.body;
 const terminal = new Terminal();
 const shell = new Shell(terminal);
 
-body.append(terminal.container);
+body.append(terminal.root);
 terminal.focus();
 
 body.addEventListener("drop", event => {
@@ -15,7 +15,7 @@ body.addEventListener("drop", event => {
 	if(files?.length) {
 		shell.system.fileSystem.add(files);
 		terminal.stdout(`Added ${files.length} files:`);
-		shell.process(`ls ${[...files].map(file => file.name).join(" ")}`, new AbortController(), false);
+		shell.process(`ls ${[...files].map(file => file.name).join(" ")}`, false);
 	}
 })
 
