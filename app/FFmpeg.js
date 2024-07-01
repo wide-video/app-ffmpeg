@@ -1,14 +1,21 @@
+import * as Const from "./Const.js";
+
 export class FFmpeg {
 	constructor(system) {
 		this.system = system;
 	}
 
 	run(args) {
-		return new Promise(resolve => {
+		return new Promise(async resolve => {
 			const {fileSystem, terminal} = this.system;
-			const wasmUrl = new URL("wasm/ffmpeg-gpl-simd.wasm", document.location).href;
-			const ffmpegUrl = new URL("wasm/ffmpeg-gpl-simd-wv.js", document.location).href;
-			const ffmpegWorkerUrl = new URL("wasm/ffmpeg-gpl-simd.worker.js", document.location).href;
+			const dependencies = [Const.FFMPEG_JS_FILENAME, Const.FFMPEG_WORKER_FILENAME, Const.FFMPEG_WASM_FILENAME];
+			for(const dependency of dependencies)
+				try {
+					fileSystem.get(dependency);
+				} catch(error) {
+					await terminal.execute(`fetch ${new URL(`wasm/${dependency}`, document.location).href}`);
+				}
+
 			const worker = new Worker("./FFmpegWorker.js", {type:"module"});
 			const decoder = new TextDecoder("utf8");
 			const buffers = {stderr:"", stdout:""};
@@ -45,7 +52,7 @@ export class FFmpeg {
 			}
 
 			const files = fileSystem.list;
-			worker.postMessage({args, wasmUrl, ffmpegUrl, ffmpegWorkerUrl, files});
+			worker.postMessage({args, files});
 		})
 	}
 }

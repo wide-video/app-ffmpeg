@@ -6,7 +6,7 @@
 - handle ffmpeg errors
 - style stderr vs stdout
 - complete with tab
-- `remove file`, `fetch`, `about`, `man`, `saveas`
+- `about`, `man`, `saveas`
 
 ## Test
 

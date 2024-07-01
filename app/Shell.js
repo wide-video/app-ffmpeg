@@ -1,6 +1,7 @@
 import * as CommandParser from "./CommandParser.js"
 import * as DOM from "./DOM.js";
 import { Embedder } from "./Embedder.js";
+import { Fetch } from "./Fetch.js";
 import { FFmpeg } from "./FFmpeg.js";
 import { Open } from "./Open.js";
 import { PROMPT_PREFIX } from "./Terminal.js";
@@ -10,13 +11,14 @@ export class Shell {
     constructor(system) {
         this.system = system;
         this.embedder = new Embedder(system);
+        this.fetch = new Fetch(system);
         this.ffmpeg = new FFmpeg(system);
         this.open = new Open(system);
         this.save = new Save(system);
     }
 
     async run(line, printPrompt) {
-        const {embedder, ffmpeg, open, save, system} = this;
+        const {embedder, fetch, ffmpeg, open, save, system} = this;
         const {fileSystem, terminal} = system;
         const parsed = CommandParser.parse(line);
         if(printPrompt)
@@ -28,11 +30,13 @@ export class Shell {
             switch(command.toLowerCase()) {
                 case "clear": return terminal.clear();
                 case "embed": return embedder.run(args);
+                case "fetch": return await fetch.run(args);
                 case "ffmpeg": return await ffmpeg.run(args);
                 case "help": return this.runHelp(args);
                 case "history": return this.runHistory(args);
-                case "ls": return await fileSystem.run(args);
+                case "ls": return await fileSystem.runLS(args);
                 case "open": return await open.run(args);
+                case "rm": return await fileSystem.runRM(args);
                 case "save": return await save.run(args);
             }
             throw `command not found: ${command}`;

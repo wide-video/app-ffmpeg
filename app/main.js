@@ -19,7 +19,7 @@ body.ondrop = event => {
     body.classList.remove("dragOver");
     const files = event.dataTransfer.files;
     fileSystem.add(files);
-    terminal.stdout(`added ${files.length} files:`);
+    terminal.stdout(`Added ${files.length} files:`);
     terminal.execute(`ls ${[...files].map(file => file.name).join(" ")}`, false);
 }
 

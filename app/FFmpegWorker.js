@@ -1,3 +1,4 @@
+import * as Const from "./Const.js";
 import * as ContentType from "./ContentType.js"
 import { TTYOutput } from "./TTYOutput.js";
 
@@ -6,7 +7,10 @@ const TTY_DIR = "huge";
 const post = (message, options) => self.postMessage(message, options);
 
 self.onmessage = async (event) => {
-    const {args, wasmUrl, ffmpegUrl, ffmpegWorkerUrl, files} = event.data;
+    const {args, files} = event.data;
+    const wasmUrl = URL.createObjectURL(files.find(file => file.name === Const.FFMPEG_WASM_FILENAME));
+    const ffmpegUrl = URL.createObjectURL(files.find(file => file.name === Const.FFMPEG_JS_FILENAME));
+    const ffmpegWorkerUrl = URL.createObjectURL(files.find(file => file.name === Const.FFMPEG_WORKER_FILENAME));
 
     // Worker is module so `importScripts(ffmpegUrl)` is not available...
     // but this little hack makes createFFmpeg available instead importScripts

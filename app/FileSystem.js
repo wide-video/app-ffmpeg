@@ -22,13 +22,23 @@ export class FileSystem {
             this.map[file.name] = file;
     }
 
-    run(args) {
+    runLS(args) {
         let list = this.list;
         if(args.length)
             list = list.filter(({name}) => args.includes(name));
         for(const file of list) {
             const line = `${file.size}`.padStart(9) + ` ${file.name}`;
             this.terminal.stdout(line);
+        }
+    }
+
+    runRM(args) {
+        const {map, terminal} = this;
+        for(const name of args) {
+            if(map[name]) {
+                delete map[name];
+                terminal.stdout(`File ${name} deleted.`);
+            }
         }
     }
 }
