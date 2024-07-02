@@ -8,7 +8,7 @@ const TTY_DIR = "huge";
 
 const post = (message:FFmpegWorkerOut, options?:StructuredSerializeOptions) => self.postMessage(message, options);
 
-self.onmessage = async (event) => {
+self.onmessage = async event => {
 	const {args, files} = event.data as FFmpegWorkerIn;
 	const wasmUrl = URL.createObjectURL(files.find(file => file.name === Const.FFMPEG_WASM_FILENAME)!);
 	const ffmpegUrl = URL.createObjectURL(files.find(file => file.name === Const.FFMPEG_JS_FILENAME)!);
@@ -91,6 +91,11 @@ self.onmessage = async (event) => {
 		post({kind:"onExit", files});
 	}
 	module.callMain(args);
+}
+
+self.onunhandledrejection = event => {
+	event.preventDefault();
+	throw event.reason;
 }
 
 function getTTYEntries(args:ReadonlyArray<string>) {

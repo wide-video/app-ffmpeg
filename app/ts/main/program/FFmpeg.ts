@@ -30,6 +30,10 @@ export class FFmpeg extends Program {
 			})
 			const decoder = new TextDecoder("utf8");
 			const buffers = {stderr:"", stdout:""};
+			worker.onerror = event => {
+				worker.terminate();
+				reject(`Unexpected error: ${event.message}`);
+			}
 			worker.onmessage = event => {
 				const data = event.data as FFmpegWorkerOut;
 				const kind = data.kind;

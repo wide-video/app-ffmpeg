@@ -3,9 +3,9 @@
 ## TODO
 
 - disable prompt when running program
-- handle ffmpeg errors
 - `about`, `man`
 - embed as iframe
+- analytics
 
 ## Test
 
