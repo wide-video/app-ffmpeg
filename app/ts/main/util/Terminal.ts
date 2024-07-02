@@ -52,11 +52,11 @@ export class Terminal implements ITerminal {
 	}
 
 	stdout(line:string | Element) {
-		this.write(line, "stdout");
+		this.print(line, "stdout");
 	}
 
 	stderr(line:string | Element) {
-		this.write(line, "stderr");
+		this.print(line, "stderr");
 	}
 
 	private submit() {
@@ -75,16 +75,10 @@ export class Terminal implements ITerminal {
 		input.textContent = "";
 	}
 
-	private write(line:string | Element, type:"stdout" | "stderr") {
-		const row = DOM.div(type);
-		if(line instanceof Element)
-			row.append(line);
-		else
-			row.textContent = line;
-		
+	private print(line:string | Element, type:"stdout" | "stderr") {
 		const body = document.body;
 		const isBottom = window.scrollY >= (body.scrollHeight - body.clientHeight - 10);
-		this.log.append(row);
+		this.log.append(DOM.div(type, line));
 		if(isBottom)
 			HTMLUtil.scrollToBottom();
 	}

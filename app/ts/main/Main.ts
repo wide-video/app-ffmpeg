@@ -1,6 +1,6 @@
-import * as ArgsUtil from "~util/ArgsUtil"
-import { Shell } from "~util/Shell"
-import { Terminal } from "~util/Terminal"
+import * as ProcessUtil from "~util/ProcessUtil";
+import { Shell } from "~util/Shell";
+import { Terminal } from "~util/Terminal";
 
 const body = document.body;
 const terminal = new Terminal();
@@ -8,16 +8,12 @@ const shell = new Shell(terminal);
 
 body.append(terminal.root);
 terminal.focus();
+shell.process("help", false);
 
 body.addEventListener("drop", event => {
 	event.preventDefault();
 	body.classList.remove("dragOver");
-	const files = event.dataTransfer?.files;
-	if(files?.length) {
-		shell.system.fileSystem.add(files);
-		terminal.stdout(`Added ${files.length} files:`);
-		shell.process(`ls ${[...files].map(file => ArgsUtil.escape(file.name)).join(" ")}`, false);
-	}
+	ProcessUtil.addFiles(event.dataTransfer?.files, shell.system);
 })
 
 body.addEventListener("dragleave", event => {

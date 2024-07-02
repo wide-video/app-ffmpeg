@@ -1,5 +1,5 @@
-import * as ArgsUtil from "~util/ArgsUtil"
-import * as Const from "common/Const";
+import * as ArgsUtil from "~util/ArgsUtil";
+import { FFMPEG_WASM } from "common/Const";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
@@ -12,13 +12,13 @@ export class FFmpeg extends Program {
 	override run(args:ReadonlyArray<string>, signal:AbortSignal) {
 		return new Promise<void>(async (resolve, reject) => {
 			const {fileSystem, shell, terminal} = this.system;
-			const dependencies = [Const.FFMPEG_JS_FILENAME, Const.FFMPEG_WORKER_FILENAME, Const.FFMPEG_WASM_FILENAME];
+			const dependencies = [FFMPEG_WASM.MAIN_FILENAME, FFMPEG_WASM.WORKER_FILENAME, FFMPEG_WASM.WASM_FILENAME];
 			for(const dependency of dependencies)
 				try {
 					fileSystem.get(dependency);
 				} catch(error) {
 					try {
-						await shell.subprocess(`fetch ${new URL(`ffmpeg-${Const.FFMPEG_VERSION}/${dependency}`, location.href).href}`, signal);
+						await shell.subprocess(`fetch ${new URL(`${FFMPEG_WASM.PATH}/${dependency}`, location.href).href}`, signal);
 					} catch(error) {
 						return reject(error);
 					}

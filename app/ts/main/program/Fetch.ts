@@ -1,4 +1,4 @@
-import * as ContentType from "common/ContentType"
+import * as ContentType from "common/ContentType";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
 

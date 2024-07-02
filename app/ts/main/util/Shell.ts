@@ -1,8 +1,9 @@
-import * as ArgsUtil from "~util/ArgsUtil"
+import { Add } from "~program/Add";
+import * as ArgsUtil from "~util/ArgsUtil";
 import { Clear } from "~program/Clear";
 import { Command } from "~type/Command";
 import { CP } from "~program/CP";
-import * as CommandParser from "~util/CommandParser"
+import * as CommandParser from "~util/CommandParser";
 import * as DOM from "~util/DOM";
 import { Embed } from "~program/Embed";
 import { Fetch } from "~program/Fetch";
@@ -23,23 +24,23 @@ import { Terminal } from "~util/Terminal";
 
 export class Shell implements IShell {
 	readonly system:System;
+	readonly programs:ReadonlyArray<Program>;
 
-	private readonly programs:ReadonlyArray<Program>;
 	private controller:AbortController | undefined;
 
 	constructor(terminal:Terminal) {
 		const system = this.system = {fileSystem:terminal.fileSystem, shell:this, terminal};
-		this.programs = [new Clear(system), new CP(system), new Embed(system), new Fetch(system),
-			new FFmpeg(system), new Help(system), new History(system), new LS(system), new MV(system),
-			new Open(system), new RM(system), new Save(system)];
+		this.programs = [new Add(system), new Clear(system), new CP(system), new Embed(system),
+			new Fetch(system), new FFmpeg(system), new Help(system), new History(system),
+			new LS(system), new MV(system), new Open(system), new RM(system), new Save(system)];
 
 		terminal.init(this.process.bind(this), this.kill.bind(this));
 	}
 
-	process(command:Command, printPrompt=true) {
+	process(command:Command, printCommand=true) {
 		if(this.controller)
 			throw "Process in progress.";
-		return this.run(command, new AbortController(), printPrompt);
+		return this.run(command, new AbortController(), printCommand);
 	}
 
 	subprocess(command:Command, signal:AbortSignal) {
@@ -55,10 +56,10 @@ export class Shell implements IShell {
 		this.controller = undefined;
 	}
 
-	private async run(command:Command, controllerOrSignal:AbortController | AbortSignal, printPrompt?:boolean) {
+	private async run(command:Command, controllerOrSignal:AbortController | AbortSignal, printCommand?:boolean) {
 		const {programs, system:{terminal}} = this;
 		const parsed = CommandParser.parse(command);
-		if(printPrompt)
+		if(printCommand)
 			this.printCommand(command, parsed, terminal.prefix);
 
 		if(!parsed)
@@ -92,20 +93,17 @@ export class Shell implements IShell {
 			return terminal.stdout(`${prefix}${command}`);
 
 		const {args, program} = parsed;
-		const programElement = DOM.span("program");
-		programElement.textContent = program;
+		const programElement = DOM.span("program", program);
 	
-		const promptElement = DOM.span("prompt");
-		promptElement.append(prefix, programElement);
+		const commandElement = DOM.span("command", [prefix, programElement]);
 		for(const arg of args) {
-			const element = DOM.span("arg");
+			const element = DOM.span("arg", ArgsUtil.escape(arg));
 			if(!isNaN(Number(arg)))
 				element.classList.add("number");
 			else if(arg.startsWith("-"))
 				element.classList.add("modifier");
-			element.textContent = ArgsUtil.escape(arg);
-			promptElement.append(" ", element);
+			commandElement.append(" ", element);
 		}
-		terminal.stdout(promptElement);
+		terminal.stdout(commandElement);
 	}
 }

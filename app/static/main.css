@@ -13,10 +13,10 @@
 body {
 	--background: #1E1E1E;
 	--color: #D4D4D4;
-	--color-prompt-program: #DCDCAA;
-	--color-prompt-arg: #ce9178;
-	--color-prompt-arg-modifier: #569cd6;
-	--color-prompt-arg-number: #b5cea8;
+	--color-command-program: #DCDCAA;
+	--color-command-arg: #ce9178;
+	--color-command-arg-modifier: #569cd6;
+	--color-command-arg-number: #b5cea8;
 
 	background: var(--background);
 
@@ -30,6 +30,14 @@ body {
 		background: var(--icon) no-repeat center / 10em;
 		backdrop-filter: blur(.2em);
 	}
+}
+
+strong {
+	font-weight: bold;
+}
+
+a {
+	text-decoration: underline;
 }
 
 .Terminal {
@@ -46,20 +54,14 @@ body {
 
 	> .log {
 		> .stdout {
-			> .prompt {
-				> .program {
-					color: var(--color-prompt-program);
-				}
-
+			> .command {
 				> .arg {
-					color: var(--color-prompt-arg);
-
 					&.modifier {
-						color: var(--color-prompt-arg-modifier);
+						color: var(--color-command-arg-modifier);
 					}
 
 					&.number {
-						color: var(--color-prompt-arg-number);
+						color: var(--color-command-arg-number);
 					}
 				}
 			}
@@ -71,6 +73,14 @@ body {
 				height: 250px;
 				margin: 0 3px 3px 0;
 			}
+		}
+
+		.program {
+			color: var(--color-command-program);
+		}
+
+		.arg {
+			color: var(--color-command-arg);
 		}
 	}
 

@@ -1,4 +1,4 @@
-import * as ArgsUtil from "~util/ArgsUtil"
+import * as ArgsUtil from "~util/ArgsUtil";
 import { FileSystem } from "~util/FileSystem";
 import * as HTMLUtil from "~util/HTMLUtil";
 import * as ProgramName from "~type/ProgramName";
