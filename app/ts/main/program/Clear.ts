@@ -1,12 +1,12 @@
 import { Program } from "~program/Program";
 import { System } from "~type/System";
 
-export class Help extends Program {
+export class Clear extends Program {
 	constructor(system:System) {
-		super("help", system);
+		super("clear", system);
 	}
 
 	override run() {
-		this.system.terminal.stdout("this is help");
+		this.system.terminal.clear();
 	}
 }

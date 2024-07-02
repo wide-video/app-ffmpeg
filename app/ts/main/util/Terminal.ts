@@ -23,7 +23,7 @@ export class Terminal implements ITerminal {
 	constructor() {
 		const {input, log, prefix, prompt, root} = this;
 
-		this.fileSystem = new FileSystem(this);
+		this.fileSystem = new FileSystem();
 
 		input.contentEditable = "true";
 		input.addEventListener("paste", this.onInputPaste.bind(this));
@@ -61,12 +61,12 @@ export class Terminal implements ITerminal {
 
 	private submit() {
 		const {history, input} = this;
-		const command = input.textContent;
+		const command = input.textContent as Command;
 		if(!command)
 			return;
 		
 		try {
-			this.execute(<Command>command).catch(() => {});
+			this.execute(command).catch(() => {});
 		} catch(error) {
 			return; // another process in progress
 		}

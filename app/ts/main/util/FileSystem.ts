@@ -1,12 +1,5 @@
-import { ITerminal } from "~type/ITerminal";
-
 export class FileSystem {
-	private readonly terminal:ITerminal;
 	private readonly map:Record<string, File> = {};
-
-	constructor(terminal:ITerminal) {
-		this.terminal = terminal;
-	}
 
 	get list() {
 		return Object.values(this.map).sort((a, b) => a.name.localeCompare(b.name));
@@ -24,22 +17,19 @@ export class FileSystem {
 			this.map[file.name] = file;
 	}
 
-	runLS(args:ReadonlyArray<string>) {
-		let list = this.list;
-		if(args.length)
-			list = list.filter(({name}) => args.includes(name));
-		for(const file of list) {
-			this.terminal.stdout(`${file.size}`.padStart(9) + ` ${file.name}`);
-		}
+	copy(source:string, target:string) {
+		const file = this.get(source);
+		const type = file.type;
+		this.add([new File([file], target, type ? {type} : undefined)]);
 	}
 
-	runRM(args:ReadonlyArray<string>) {
-		const {map, terminal} = this;
-		for(const name of args) {
-			if(map[name]) {
-				delete map[name];
-				terminal.stdout(`File ${name} deleted.`);
-			}
-		}
+	remove(filename:string) {
+		this.get(filename); // throws error
+		delete this.map[filename];
+	}
+
+	rename(source:string, target:string) {
+		this.copy(source, target);
+		this.remove(source);
 	}
 }

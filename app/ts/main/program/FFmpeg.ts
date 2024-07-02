@@ -80,5 +80,8 @@ export class FFmpeg extends Program {
 
 // fixes chrome crashes when many blobs are returned
 function terminate(worker:Worker) {
-	setTimeout(worker.terminate, 500);
+	setTimeout(() => {
+		try {
+			worker.terminate();
+		} catch(error) {}}, 500);
 }

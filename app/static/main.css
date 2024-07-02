@@ -18,9 +18,6 @@ body {
 	--color-prompt-arg-modifier: #569cd6;
 	--color-prompt-arg-number: #b5cea8;
 
-	--padding: 8px;
-
-	padding: var(--padding);
 	background: var(--background);
 
 	&.dragOver::after {
@@ -40,6 +37,7 @@ body {
 	font-kerning: none;
 	font-size: 13px;
 	color: var(--color);
+	padding: 8px;
 	width: 100%;
 	height: 100%;
 	line-height: 1em; /* fixes chinese characters */

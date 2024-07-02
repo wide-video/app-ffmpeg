@@ -1,8 +1,10 @@
+import { Command } from "~type/Command";
+
 const KEY = "history";
 const MAX = 50;
 
 export class History {
-	private readonly list:string[];
+	private readonly list:Command[];
 	private index:number;
 
 	constructor() {
@@ -14,11 +16,11 @@ export class History {
 		this.index = this.list.length;
 	}
 
-	getList():ReadonlyArray<string> {
+	getList():ReadonlyArray<Command> {
 		return this.list;
 	}
 
-	add(command:string) {
+	add(command:Command) {
 		const list = this.list;
 		list.push(command);
 		if(list.length > MAX)

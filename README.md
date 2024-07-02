@@ -3,6 +3,8 @@
 ## TODO
 
 - `about`, `man`
+- ffmpeg `Conversion failed!` means file already exists on FS
+- manifests favicon etc.
 - embed as iframe
 - analytics
 
