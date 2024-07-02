@@ -18,7 +18,13 @@ export class Fetch extends Program {
 			if(!response.ok)
 				throw `Failed to Fetch: ${response.status} ${response.statusText}`;
 			
-			const contentLength = response.headers.get("content-length") ?? "?";
+			// https://stackoverflow.com/questions/76984567/http-header-for-decompressed-length/78699196
+			const headers = response.headers;
+			const contentLength = headers.get("x-decompressed-content-length")
+				?? headers.get("x-amz-decoded-content-length")
+				?? headers.get("x-content-length")
+				?? headers.get("content-length")
+				?? "?";
 			let loaded = 0;
 			const progressResponse = new Response(new ReadableStream({
 				async start(controller) {
