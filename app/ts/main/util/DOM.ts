@@ -6,6 +6,12 @@ export function create(tagName:string, className?:string, content?:Content) {
 	return result;
 }
 
+export const a = (className?:string, content?:Content) => create("a", className, content) as HTMLAnchorElement;
+export const div = (className?:string, content?:Content) => create("div", className, content) as HTMLDivElement;
+export const iframe = (className?:string) => create("iframe", className) as HTMLIFrameElement;
+export const input = (className?:string) => create("input", className) as HTMLInputElement;
+export const span = (className?:string, content?:Content) => create("span", className, content) as HTMLSpanElement;
+
 export function append(container:Element, content?:Content){
 	if(typeof content === "string")
 		container.append(content);
@@ -21,10 +27,6 @@ export function append(container:Element, content?:Content){
 			append(container, item);
 }
 
-export const a = (className?:string, content?:Content) => create("a", className, content) as HTMLAnchorElement;
-export const div = (className?:string, content?:Content) => create("div", className, content) as HTMLDivElement;
-export const iframe = (className?:string) => create("iframe", className) as HTMLIFrameElement;
-export const input = (className?:string) => create("input", className) as HTMLInputElement;
-export const span = (className?:string, content?:Content) => create("span", className, content) as HTMLSpanElement;
+export const clear = (element:HTMLElement) => element.replaceChildren();
 
 type Content = Node | string | number | undefined | HTMLCollection | ReadonlyArray<Content>;

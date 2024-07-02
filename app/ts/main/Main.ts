@@ -3,10 +3,9 @@ import { Shell } from "~util/Shell";
 import { Terminal } from "~util/Terminal";
 
 const body = document.body;
-const terminal = new Terminal();
+const root = document.getElementById("Terminal")!;
+const terminal = new Terminal(root);
 const shell = new Shell(terminal);
-
-body.append(terminal.root);
 terminal.focus();
 shell.process("help", false);
 

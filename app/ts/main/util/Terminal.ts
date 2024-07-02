@@ -10,8 +10,7 @@ export class Terminal implements ITerminal {
 	readonly prefix = "$ ";
 	readonly history = new History();
 	readonly fileSystem:FileSystem;
-	
-	readonly root = DOM.div("Terminal");
+	readonly root:HTMLElement;
 
 	private readonly log = DOM.div("log");
 	private readonly input = DOM.span("input");
@@ -20,16 +19,18 @@ export class Terminal implements ITerminal {
 	private kill = ():void => {throw "Not Implemented"}
 	private execute = (_command:Command):Promise<void> => {throw "Not Implemented"}
 
-	constructor() {
-		const {input, log, prefix, prompt, root} = this;
+	constructor(root:HTMLElement) {
+		const {input, log, prefix, prompt} = this;
 
 		this.fileSystem = new FileSystem();
+		this.root = root;
 
 		input.contentEditable = "true";
 		input.addEventListener("paste", this.onInputPaste.bind(this));
 		input.addEventListener("input", this.onInputInput.bind(this));
 		input.addEventListener("keydown", this.onInputKeyDown.bind(this));
 		prompt.append(prefix, input);
+		DOM.clear(root);
 		root.append(log, prompt);
 		root.addEventListener("mouseup", this.onRootMouseUp.bind(this));
 	}
@@ -44,7 +45,7 @@ export class Terminal implements ITerminal {
 	}
 
 	clear() {
-		this.log.replaceChildren();
+		DOM.clear(this.log);
 	}
 
 	clearLine() {

@@ -3,10 +3,13 @@
 ## TODO
 
 - `about`, `man`
+- mount small files as buffers
+- x-content-length is a standard?
 - ffmpeg `Conversion failed!` means file already exists on FS
 - manifests favicon etc.
 - embed as iframe
 - analytics
+- report crbug worker returning many blobs crashes on terminate()
 
 ## Test
 
