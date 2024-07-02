@@ -18,7 +18,7 @@ declare global {
 		readonly tty:(stream:FS.FSStream & FS.Lookup, buffer:Int8Array, offset:number, length:number ,pos:number) => boolean;
 	
 		readonly callMain:(args:ReadonlyArray<string>) => number;
-		onExit:() => void;
+		onExit:(code:number) => void;
 	}
 }
 

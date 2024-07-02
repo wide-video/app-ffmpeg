@@ -41,6 +41,8 @@
 :root {
 	--background: #1E1E1E;
 	--color: #D4D4D4;
+	--color-error: #750000;
+	--color-running: #3b3b3b;
 	--color-command-program: #DCDCAA;
 	--color-command-arg: #ce9178;
 	--color-command-arg-modifier: #569cd6;
@@ -87,6 +89,16 @@ strong {
 	word-break: break-all;
 
 	> .log {
+		> :is(.stderr, .stdout) {
+			&.running {
+				background: var(--color-running);
+			}
+
+			&.error {
+				background: var(--color-error);
+			}
+		}
+
 		.program {
 			color: var(--color-command-program);
 		}

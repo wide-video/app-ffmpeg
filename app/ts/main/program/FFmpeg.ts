@@ -66,7 +66,7 @@ export class FFmpeg extends Program {
 							terminal.stdout(`Embedding ${Math.min(max, files.length)} of ${files.length} outputs:`);
 							shell.subprocess(`embed ${files.slice(0, max).map(file => ArgsUtil.escape(file.name)).join(" ")}`, signal);
 						}
-						resolve();
+						data.success ? resolve() : reject("Process failed.");
 						break;
 					}
 				}

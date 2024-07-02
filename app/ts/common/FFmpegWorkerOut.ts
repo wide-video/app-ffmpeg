@@ -1,5 +1,6 @@
 export type FFmpegWorkerOut = {
 	readonly kind:"onExit";
+	readonly success:boolean;
 	readonly files:ReadonlyArray<File>;
 } | {
 	readonly kind:"stderr";

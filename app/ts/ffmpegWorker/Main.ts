@@ -72,7 +72,8 @@ self.onmessage = async event => {
 	// store the original content
 	const dirContent = FS.readdir("/");
 
-	module.onExit = () => {
+	module.onExit = code => {
+		const success = code >= 0;
 		const files = [];
 		for(const filename of FS.readdir("/"))
 			if(!dirContent.includes(filename)) {
@@ -88,7 +89,7 @@ self.onmessage = async event => {
 				files.push(file);
 		}
 
-		post({kind:"onExit", files});
+		post({kind:"onExit", success, files});
 	}
 	module.callMain(args);
 }

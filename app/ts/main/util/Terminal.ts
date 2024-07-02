@@ -5,6 +5,7 @@ import { FileSystem } from "~util/FileSystem";
 import { History } from "~util/History";
 import * as HTMLUtil from "~util/HTMLUtil";
 import { ITerminal } from "~type/ITerminal";
+import { TerminalCommand } from "~util/TerminalCommand";
 
 export class Terminal implements ITerminal {
 	readonly prefix = "> ";
@@ -29,7 +30,7 @@ export class Terminal implements ITerminal {
 		input.addEventListener("paste", this.onInputPaste.bind(this));
 		input.addEventListener("input", this.onInputInput.bind(this));
 		input.addEventListener("keydown", this.onInputKeyDown.bind(this));
-		prompt.append(prefix, input);
+		prompt.append(DOM.span("prefix", prefix), input);
 		DOM.clear(root);
 		root.append(log, prompt);
 		root.addEventListener("mouseup", this.onRootMouseUp.bind(this));
@@ -53,18 +54,16 @@ export class Terminal implements ITerminal {
 	}
 
 	stdout(line:string | Element) {
-		this.print(line, "stdout");
+		return this.print(line, "stdout");
 	}
 
 	stderr(line:string | Element) {
-		this.print(line, "stderr");
+		return this.print(line, "stderr");
 	}
 
 	private submit() {
 		const {history, input} = this;
 		const command = input.textContent as Command;
-		if(!command)
-			return;
 		
 		try {
 			this.execute(command).catch(() => {});
@@ -79,9 +78,11 @@ export class Terminal implements ITerminal {
 	private print(line:string | Element, type:"stdout" | "stderr") {
 		const body = document.body;
 		const isBottom = window.scrollY >= (body.scrollHeight - body.clientHeight - 10);
-		this.log.append(DOM.div(type, line));
+		const element = DOM.div(type, line);
+		this.log.append(element);
 		if(isBottom)
 			HTMLUtil.scrollToBottom();
+		return new TerminalCommand(element);
 	}
 
 	private onInputPaste(event:ClipboardEvent) {

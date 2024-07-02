@@ -48,7 +48,7 @@ export class Shell implements IShell {
 	}
 
 	print(command:Command) {
-		this.printCommand(command, CommandParser.parse(command));
+		this.printCommand(command, CommandParser.parse(command), {setState:false});
 	}
 
 	private kill() {
@@ -58,25 +58,29 @@ export class Shell implements IShell {
 
 	private async run(command:Command, controllerOrSignal:AbortController | AbortSignal, printCommand?:boolean) {
 		const {programs, system:{terminal}} = this;
-		const parsed = CommandParser.parse(command);
-		if(printCommand)
-			this.printCommand(command, parsed, terminal.prefix);
-
-		if(!parsed)
-			throw "Invalid command";
-		
-		const {args, program} = parsed;
 		const controller = controllerOrSignal instanceof AbortController ? controllerOrSignal : undefined;
 		const signal = controllerOrSignal instanceof AbortController ? controllerOrSignal.signal : controllerOrSignal;
-		if(controller)
-			this.controller = controller;
+		const parsed = CommandParser.parse(command);
+		const options:PrintCommandOptions = {prefix:terminal.prefix, setState:controller ? true : false};
+		const tcommand = printCommand ? this.printCommand(command, parsed, options) : undefined;
+		tcommand?.setState("running");
+		
 		try {
+			if(!parsed)
+				throw "Invalid command";
+			const {args, program} = parsed;
+			if(controller)
+				this.controller = controller;
 			const name = program.toLowerCase() as ProgramName;
 			for(const program of programs)
-				if(program.name === name)
-					return await program.run(args, signal);
+				if(program.name === name) {
+					const result = await program.run(args, signal);
+					tcommand?.setState("success");
+					return result;
+				}
 			throw `Command not found: ${program}`;
 		} catch(error) {
+			tcommand?.setState("error");
 			// subprocesses bubbles the same exceptions up, but we only log it once
 			if(controller)
 				terminal.stderr(`${error}`);
@@ -87,15 +91,18 @@ export class Shell implements IShell {
 		}
 	}
 
-	private printCommand(command:string, parsed:ParsedCommand | undefined, prefix="") {
+	private printCommand(command:string, parsed:ParsedCommand | undefined, options:PrintCommandOptions) {
 		const terminal = this.system.terminal;
-		if(!parsed)
-			return terminal.stdout(`${prefix}${command}`);
+		const {prefix, setState} = options;
+		if(!parsed) {
+			const tcommand = terminal.stdout(DOM.span("command", [DOM.span("prefix", prefix), command]));
+			setState && tcommand.setState("error");
+			return;
+		}
 
 		const {args, program} = parsed;
 		const programElement = DOM.span("program", program);
-	
-		const commandElement = DOM.span("command", [prefix, programElement]);
+		const commandElement = DOM.span("command", [DOM.span("prefix", prefix), programElement]);
 		for(const arg of args) {
 			const element = DOM.span("arg", ArgsUtil.escape(arg));
 			if(!isNaN(Number(arg)))
@@ -104,6 +111,13 @@ export class Shell implements IShell {
 				element.classList.add("modifier");
 			commandElement.append(" ", element);
 		}
-		terminal.stdout(commandElement);
+		const tcommand = terminal.stdout(commandElement);
+		setState && tcommand.setState("running");
+		return tcommand;
 	}
+}
+
+type PrintCommandOptions = {
+	readonly prefix?:string | undefined;
+	readonly setState?:boolean | undefined;
 }
