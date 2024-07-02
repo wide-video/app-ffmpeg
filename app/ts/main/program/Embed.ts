@@ -1,3 +1,4 @@
+import * as BlobUtil from "~util/BlobUtil";
 import * as DOM from "~util/DOM";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
@@ -8,17 +9,30 @@ export class Embed extends Program {
 	}
 
 	override run(args:ReadonlyArray<string>) {
-		const {fileSystem, terminal} = this.system;
+		const {name, system:{fileSystem, terminal}} = this;
+		if(!args.length)
+			return;
+
+		const container = DOM.div(name);
 		for(const filename of args) {
 			const file = fileSystem.get(filename);
-			const iframe = DOM.iframe("embed");
-			iframe.src = URL.createObjectURL(file);
+			const iframe = DOM.iframe();
+			iframe.src = BlobUtil.url(file);
 			iframe.addEventListener("load", () => {
-				const style = DOM.style();
-				style.textContent = "img {max-width:100%; height:100%}";
-				iframe.contentDocument?.body.append(style);
+				const element = iframe.contentDocument?.body?.firstElementChild;
+				if(element?.tagName === "IMG") {
+					const img = element as HTMLImageElement;
+					img.style.maxWidth = "100%";
+					img.style.maxHeight = "100%";
+					if(img.clientWidth < iframe.clientWidth)
+						iframe.style.width = `${img.clientWidth}px`;
+					else if(img.clientHeight < iframe.clientHeight)
+						iframe.style.height = `${img.clientHeight}px`;
+				}
 			});
-			terminal.stdout(iframe);
+			container.append(iframe);
+			
 		}
+		terminal.stdout(container);
 	}
 }

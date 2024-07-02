@@ -26,8 +26,8 @@ export class Terminal implements ITerminal {
 		this.fileSystem = new FileSystem(this);
 
 		input.contentEditable = "true";
-		input.addEventListener("paste", HTMLUtil.pasteRaw);
-		input.addEventListener("input", HTMLUtil.scrollToBottom);
+		input.addEventListener("paste", this.onInputPaste.bind(this));
+		input.addEventListener("input", this.onInputInput.bind(this));
 		input.addEventListener("keydown", this.onInputKeyDown.bind(this));
 		prompt.append(prefix, input);
 		root.append(log, prompt);
@@ -64,8 +64,14 @@ export class Terminal implements ITerminal {
 		const command = input.textContent;
 		if(!command)
 			return;
+		
+		try {
+			this.execute(<Command>command).catch(() => {});
+		} catch(error) {
+			return; // another process in progress
+		}
+
 		history.add(command);
-		this.execute(<Command>command).catch(() => {});
 		input.textContent = "";
 	}
 
@@ -81,6 +87,15 @@ export class Terminal implements ITerminal {
 		this.log.append(row);
 		if(isBottom)
 			HTMLUtil.scrollToBottom();
+	}
+
+	private onInputPaste(event:ClipboardEvent) {
+		HTMLUtil.pasteRaw(event);
+		HTMLUtil.scrollToBottom();
+	}
+
+	private onInputInput() {
+		HTMLUtil.scrollToBottom();
 	}
 
 	private onInputKeyDown(event:KeyboardEvent) {

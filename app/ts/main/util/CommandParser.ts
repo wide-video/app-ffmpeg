@@ -8,16 +8,22 @@ test:
 export function parse(command:string):ParsedCommand | undefined {
 	let singleQuoteOpen = false;
 	let doubleQuoteOpen = false;
+	let escaped = false;
 	let buffer = "";
 	const args = [];
 	const length = command.length;
 	for(let i = 0; i < length; i++) {
 		const token = command[i];
+		if(token === "\\" && !escaped) {
+			escaped = true;
+			continue;
+		}
+
 		if(!doubleQuoteOpen && token === "'") {
 			singleQuoteOpen = !singleQuoteOpen;
 		} else if(!singleQuoteOpen && token === '"') {
 			doubleQuoteOpen = !doubleQuoteOpen;
-		} else if(!singleQuoteOpen && !doubleQuoteOpen
+		} else if(!singleQuoteOpen && !doubleQuoteOpen && !escaped
 			&& (token === " " || token === " " || token === "\t" || token === "\n" || token === "\r")) {
 			if(buffer.length) {
 				args.push(buffer);
@@ -26,6 +32,7 @@ export function parse(command:string):ParsedCommand | undefined {
 		} else {
 			buffer += token;
 		}
+		escaped = false;
 	}
 
 	if(buffer.length)

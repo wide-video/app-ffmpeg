@@ -1,3 +1,4 @@
+import * as ArgsUtil from "~util/ArgsUtil"
 import { Command } from "~type/Command";
 import * as CommandParser from "~util/CommandParser"
 import * as DOM from "~util/DOM";
@@ -37,11 +38,13 @@ export class Shell implements IShell {
 		terminal.init(this.process.bind(this), this.kill.bind(this));
 	}
 
-	async process(command:Command, printPrompt=true) {
+	process(command:Command, printPrompt=true) {
+		if(this.controller)
+			throw "Process in progress.";
 		return this.run(command, new AbortController(), printPrompt);
 	}
 
-	async subprocess(command:Command, signal:AbortSignal) {
+	subprocess(command:Command, signal:AbortSignal) {
 		return this.run(command, signal);
 	}
 
@@ -112,7 +115,7 @@ export class Shell implements IShell {
 				element.classList.add("number");
 			else if(arg.startsWith("-"))
 				element.classList.add("modifier");
-			element.textContent = arg;
+			element.textContent = ArgsUtil.escape(arg);
 			promptElement.append(" ", element);
 		}
 		terminal.stdout(promptElement);

@@ -1,3 +1,4 @@
+import * as ArgsUtil from "~util/ArgsUtil"
 import { Shell } from "~util/Shell"
 import { Terminal } from "~util/Terminal"
 
@@ -15,7 +16,7 @@ body.addEventListener("drop", event => {
 	if(files?.length) {
 		shell.system.fileSystem.add(files);
 		terminal.stdout(`Added ${files.length} files:`);
-		shell.process(`ls ${[...files].map(file => file.name).join(" ")}`, false);
+		shell.process(`ls ${[...files].map(file => ArgsUtil.escape(file.name)).join(" ")}`, false);
 	}
 })
 

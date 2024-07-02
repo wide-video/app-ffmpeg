@@ -2,7 +2,6 @@
 
 ## TODO
 
-- disable prompt when running program
 - `about`, `man`
 - embed as iframe
 - analytics

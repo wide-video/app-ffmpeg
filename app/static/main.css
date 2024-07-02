@@ -66,11 +66,12 @@ body {
 				}
 			}
 
-			> iframe.embed {
+			> .embed > iframe {
 				border: none;
-				display: block;
+				display: inline-block;
 				width: 360px;
 				height: 250px;
+				margin: 0 3px 3px 0;
 			}
 		}
 	}

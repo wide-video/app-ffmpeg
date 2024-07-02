@@ -1,3 +1,4 @@
+import * as BlobUtil from "~util/BlobUtil";
 import * as DOM from "~util/DOM";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
@@ -19,7 +20,7 @@ export class Save extends Program {
 			} else {
 				const a = DOM.a();
 				a.download = filename;
-				a.href = URL.createObjectURL(file);
+				a.href = BlobUtil.url(file);
 				a.click();
 			}
 		}

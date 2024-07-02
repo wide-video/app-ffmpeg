@@ -1,3 +1,4 @@
+import * as ArgsUtil from "~util/ArgsUtil"
 import * as Const from "common/Const";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
 import { Program } from "~program/Program";
@@ -25,13 +26,13 @@ export class FFmpeg extends Program {
 
 			const worker = new Worker("./FFmpegWorker.js", {type:"module"});
 			signal.addEventListener("abort", () => {
-				worker.terminate();
+				terminate(worker);
 				reject(signal.reason);
 			})
 			const decoder = new TextDecoder("utf8");
 			const buffers = {stderr:"", stdout:""};
 			worker.onerror = event => {
-				worker.terminate();
+				terminate(worker);
 				reject(`Unexpected error: ${event.message}`);
 			}
 			worker.onmessage = event => {
@@ -58,9 +59,13 @@ export class FFmpeg extends Program {
 					}
 					case "onExit": {
 						const files = data.files;
-						worker.terminate();
+						terminate(worker);
 						fileSystem.add(files);
-						shell.subprocess(`embed ${files.map(file => file.name).join(" ")}`, signal);
+						if(files.length) {
+							const max = 4;
+							terminal.stdout(`Embedding ${Math.min(max, files.length)} of ${files.length} outputs:`);
+							shell.subprocess(`embed ${files.slice(0, max).map(file => ArgsUtil.escape(file.name)).join(" ")}`, signal);
+						}
 						resolve();
 						break;
 					}
@@ -71,4 +76,9 @@ export class FFmpeg extends Program {
 			worker.postMessage({args, files});
 		})
 	}
+}
+
+// fixes chrome crashes when many blobs are returned
+function terminate(worker:Worker) {
+	setTimeout(worker.terminate, 500);
 }

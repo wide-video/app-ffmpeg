@@ -1,3 +1,4 @@
+import * as ArgsUtil from "~util/ArgsUtil"
 import { FileSystem } from "~util/FileSystem";
 import * as HTMLUtil from "~util/HTMLUtil";
 import * as ProgramName from "~type/ProgramName";
@@ -22,12 +23,14 @@ export function complete(element:HTMLElement, fileSystem:FileSystem) {
 				options.push(chunk);
 		}
 
-	for(const {name} of fileSystem.list)
+	for(const file of fileSystem.list) {
+		const name = ArgsUtil.escape(file.name);
 		if(name.startsWith(wordBefore)) {
 			const chunk = name.substring(wordBefore.length);
 			if(chunk)
 				options.push(chunk);
 		}
+	}
 
 	let chunk = options.shift();
 	if(!chunk)
