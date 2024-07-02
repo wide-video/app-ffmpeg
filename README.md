@@ -5,7 +5,7 @@
 - `about`, `man`
 - mount small files as buffers
 - ffmpeg `Conversion failed!` means file already exists on FS
-- manifests favicon etc.
+- manifests.json, apple-touch-icon.png, og_image2.jpg
 - embed as iframe
 - analytics
 - report crbug worker returning many blobs crashes on terminate()

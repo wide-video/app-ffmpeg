@@ -7,7 +7,7 @@ import * as HTMLUtil from "~util/HTMLUtil";
 import { ITerminal } from "~type/ITerminal";
 
 export class Terminal implements ITerminal {
-	readonly prefix = "$ ";
+	readonly prefix = "> ";
 	readonly history = new History();
 	readonly fileSystem:FileSystem;
 	readonly root:HTMLElement;
