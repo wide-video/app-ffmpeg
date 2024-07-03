@@ -8,15 +8,8 @@ export class CP extends Program {
 
 	override run(args:ReadonlyArray<string>) {
 		const {fileSystem, terminal} = this.system;
-		
-		const source = args[0];
-		if(!source)
-			throw "Source filename missing.";
-
-		const target = args[1];
-		if(!target)
-			throw "Target filename missing.";
-
+		const source = args[0] ?? "";
+		const target = args[1] ?? "";
 		fileSystem.copy(source, target);
 		terminal.stdout(`${source} was copied into ${target}`);
 	}

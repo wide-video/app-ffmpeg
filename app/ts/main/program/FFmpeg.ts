@@ -1,8 +1,8 @@
-import * as ArgsUtil from "~util/ArgsUtil";
 import { FFMPEG_WASM } from "common/Const";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
+import * as ProgramUtil from "~util/ProgramUtil";
 import { Program } from "~program/Program";
-import { System } from "~type/System";
+import { System } from "~type/System";``
 
 export class FFmpeg extends Program {
 	constructor(system:System) {
@@ -18,7 +18,7 @@ export class FFmpeg extends Program {
 					fileSystem.get(dependency);
 				} catch(error) {
 					try {
-						await shell.subprocess(`fetch ${new URL(`${FFMPEG_WASM.PATH}/${dependency}`, location.href).href}`, signal);
+						await ProgramUtil.fetch(new URL(`${FFMPEG_WASM.PATH}/${dependency}`, location.href).href, shell, signal);
 					} catch(error) {
 						return reject(error);
 					}
@@ -57,16 +57,22 @@ export class FFmpeg extends Program {
 						}
 						break;
 					}
-					case "onExit": {
+					case "error": {
+						terminate(worker);
+						reject(`Process finished with exit code ${data.code}`);
+						break;
+					}
+					case "success": {
 						const files = data.files;
 						terminate(worker);
 						fileSystem.add(files);
 						if(files.length) {
 							const max = 4;
-							terminal.stdout(`Embedding ${Math.min(max, files.length)} of ${files.length} outputs:`);
-							shell.subprocess(`embed ${files.slice(0, max).map(file => ArgsUtil.escape(file.name)).join(" ")}`, signal);
+							if(files.length > max)
+								terminal.stdout(`Embedding ${Math.min(max, files.length)} of ${files.length} outputs:`);
+							ProgramUtil.embed(files.slice(0, max).map(file => file.name), shell, signal);
 						}
-						data.success ? resolve() : reject("Process failed.");
+						resolve();
 						break;
 					}
 				}

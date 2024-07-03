@@ -1,3 +1,5 @@
+import * as BlobUtil from "~util/BlobUtil";
+
 export class FileSystem {
 	private readonly map:Record<string, File> = {};
 
@@ -18,9 +20,13 @@ export class FileSystem {
 	}
 
 	copy(source:string, target:string) {
-		const file = this.get(source);
-		const type = file.type;
-		this.add([new File([file], target, type ? {type} : undefined)]);
+		if(!source)
+			throw "Source filename missing.";
+		if(!target)
+			throw "Target filename missing.";
+		if(source === target)
+			throw "Source and target filenames are equal."
+		this.add([BlobUtil.toFile(this.get(source), target)]);
 	}
 
 	remove(filename:string) {

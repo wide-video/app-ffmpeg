@@ -17,6 +17,7 @@ import { Open } from "~program/Open";
 import { Save } from "~program/Save";
 import { System } from "~type/System";
 import { ParsedCommand } from "~type/ParsedCommand";
+import { PrintedCommand } from "./PrintedCommand";
 import { Program } from "~program/Program";
 import { ProgramName } from "~type/ProgramName";
 import { RM } from "~program/RM";
@@ -48,7 +49,12 @@ export class Shell implements IShell {
 	}
 
 	print(command:Command) {
-		this.printCommand(command, CommandParser.parse(command), {setState:false});
+		const parsed = CommandParser.parse(command);
+		if(parsed)
+			for(const item of parsed)
+				this.printCommand(command, item);
+		else
+			this.printCommand(command, undefined);
 	}
 
 	private kill() {
@@ -61,26 +67,29 @@ export class Shell implements IShell {
 		const controller = controllerOrSignal instanceof AbortController ? controllerOrSignal : undefined;
 		const signal = controllerOrSignal instanceof AbortController ? controllerOrSignal.signal : controllerOrSignal;
 		const parsed = CommandParser.parse(command);
-		const options:PrintCommandOptions = {prefix:terminal.prefix, setState:controller ? true : false};
-		const tcommand = printCommand ? this.printCommand(command, parsed, options) : undefined;
-		tcommand?.setState("running");
+		let print:PrintedCommand | undefined;
 		
 		try {
-			if(!parsed)
+			if(!parsed) {
+				printCommand ? this.printCommand(command, undefined, terminal.prefix) : undefined;
 				throw "Invalid command";
-			const {args, program} = parsed;
+			}
 			if(controller)
 				this.controller = controller;
-			const name = program.toLowerCase() as ProgramName;
-			for(const program of programs)
-				if(program.name === name) {
-					const result = await program.run(args, signal);
-					tcommand?.setState("success");
-					return result;
-				}
-			throw `Command not found: ${program}`;
+			for(const item of parsed) {
+				print = printCommand ? this.printCommand(command, item, terminal.prefix) : undefined;
+				print?.setState("running");
+
+				const name = item.program.toLowerCase() as ProgramName;
+				const program = programs.find(program => program.name === name);
+				if(!program)
+					throw `Command not found: ${name}`;
+
+				await program.run(item.args, signal);
+				print?.setState("success");
+			}
 		} catch(error) {
-			tcommand?.setState("error");
+			print?.setState("error");
 			// subprocesses bubbles the same exceptions up, but we only log it once
 			if(controller)
 				terminal.stderr(`${error}`);
@@ -91,33 +100,23 @@ export class Shell implements IShell {
 		}
 	}
 
-	private printCommand(command:string, parsed:ParsedCommand | undefined, options:PrintCommandOptions) {
+	private printCommand(command:string, parsed:ParsedCommand | undefined, prefix?:string) {
 		const terminal = this.system.terminal;
-		const {prefix, setState} = options;
-		if(!parsed) {
-			const tcommand = terminal.stdout(DOM.span("command", [DOM.span("prefix", prefix), command]));
-			setState && tcommand.setState("error");
-			return;
+		const content:(string | Element)[] = prefix ? [prefix] : [];
+		if(parsed) {
+			const {args, program} = parsed;
+			content.push(DOM.span("program", program));
+			for(const arg of args) {
+				const element = DOM.span("arg", ArgsUtil.escape(arg));
+				if(!isNaN(Number(arg)))
+					element.classList.add("number");
+				else if(arg.startsWith("-"))
+					element.classList.add("modifier");
+				content.push(" ", element);
+			}
+		} else {
+			content.push(command);
 		}
-
-		const {args, program} = parsed;
-		const programElement = DOM.span("program", program);
-		const commandElement = DOM.span("command", [DOM.span("prefix", prefix), programElement]);
-		for(const arg of args) {
-			const element = DOM.span("arg", ArgsUtil.escape(arg));
-			if(!isNaN(Number(arg)))
-				element.classList.add("number");
-			else if(arg.startsWith("-"))
-				element.classList.add("modifier");
-			commandElement.append(" ", element);
-		}
-		const tcommand = terminal.stdout(commandElement);
-		setState && tcommand.setState("running");
-		return tcommand;
+		return terminal.stdout(DOM.span("command", content));
 	}
-}
-
-type PrintCommandOptions = {
-	readonly prefix?:string | undefined;
-	readonly setState?:boolean | undefined;
 }

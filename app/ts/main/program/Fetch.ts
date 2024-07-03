@@ -1,5 +1,6 @@
-import * as ContentType from "common/ContentType";
+import * as BlobUtil from "~util/BlobUtil";
 import { Program } from "~program/Program";
+import * as ProgramUtil from "~util/ProgramUtil";
 import { System } from "~type/System";
 
 export class Fetch extends Program {
@@ -44,11 +45,10 @@ export class Fetch extends Program {
 			const blob = await progressResponse.blob();
 			signal.throwIfAborted();
 
-			const type = blob.type || ContentType.getMimeType(name);
-			const file = new File([blob], name, type ? {type} : undefined);
-			fileSystem.add([file]);
-			terminal.stdout("Fetched 1 file:");
-			shell.subprocess(`ls ${name}`, signal);
+			terminal.clearLine();
+			terminal.stdout(`Fetching ${name} completed:`);
+			fileSystem.add([BlobUtil.toFile(blob, name)]);
+			ProgramUtil.ls([name], shell, signal);
 		} catch(error) {
 			signal.throwIfAborted();
 			throw error;

@@ -1,4 +1,4 @@
-export class TerminalCommand {
+export class PrintedCommand {
 	private readonly element:HTMLElement;
 
 	constructor(element:HTMLElement) {

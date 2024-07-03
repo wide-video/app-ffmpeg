@@ -5,42 +5,57 @@ test:
   aFa  "bbb  ccc" 'ddd  eee'  -123	  456 č中文 8 \
  a bb  c
 */
-export function parse(command:string):ParsedCommand | undefined {
-	let singleQuoteOpen = false;
-	let doubleQuoteOpen = false;
-	let escaped = false;
-	let buffer = "";
-	const args = [];
+export function parse(command:string):ParsedCommand[] | undefined {
+	const result:ParsedCommand[] = [];
 	const length = command.length;
-	for(let i = 0; i < length; i++) {
-		const token = command[i];
-		if(token === "\\" && !escaped) {
-			escaped = true;
-			continue;
-		}
-
-		if(!doubleQuoteOpen && token === "'") {
-			singleQuoteOpen = !singleQuoteOpen;
-		} else if(!singleQuoteOpen && token === '"') {
-			doubleQuoteOpen = !doubleQuoteOpen;
-		} else if(!singleQuoteOpen && !doubleQuoteOpen && !escaped
-			&& (token === " " || token === " " || token === "\t" || token === "\n" || token === "\r")) {
-			if(buffer.length) {
+	let i = 0
+	while(i < length) {
+		let quote:"'" | '"' | undefined;
+		let escaped = false;
+		let buffer = "";
+		const args = [];
+		while(i < length) {
+			const token = command[i++]!;
+			if(escaped) {
+				if(token !== "\r" && token !== "\n")
+					buffer += token;
+				if(token === "\r" && command[i] === "\n")
+					i++;
+				escaped = false;
+			} else if(token === "\\") {
+				escaped = true;
+			} else if(quote && token === quote) {
+				quote = undefined;
 				args.push(buffer);
 				buffer = "";
+			} else if(quote) {
+				buffer += token;
+			} else if(token === "'" || token === '"') {
+				quote = token;
+			} else if(token === " " || token === " " || token === "\t") {
+				if(buffer.length) {
+					args.push(buffer);
+					buffer = "";
+				}
+			} else if(token === "\n" || token === "\r") {
+				break;
+			} else {
+				buffer += token;
 			}
-		} else {
-			buffer += token;
 		}
-		escaped = false;
+
+		if(quote || escaped)
+			return;
+
+		if(buffer.length)
+			args.push(buffer);
+
+		if(!args.length)
+			continue;
+
+		const program = args.shift()!;
+		result.push({args, program});
 	}
 
-	if(buffer.length)
-		args.push(buffer);
-
-	if(!args.length)
-		return;
-
-	const program = args.shift()!;
-	return {args, program};
+	return result.length ? result : undefined;
 }

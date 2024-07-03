@@ -5,7 +5,7 @@ import { FileSystem } from "~util/FileSystem";
 import { History } from "~util/History";
 import * as HTMLUtil from "~util/HTMLUtil";
 import { ITerminal } from "~type/ITerminal";
-import { TerminalCommand } from "~util/TerminalCommand";
+import { PrintedCommand } from "~util/PrintedCommand";
 
 export class Terminal implements ITerminal {
 	readonly prefix = "> ";
@@ -82,7 +82,7 @@ export class Terminal implements ITerminal {
 		this.log.append(element);
 		if(isBottom)
 			HTMLUtil.scrollToBottom();
-		return new TerminalCommand(element);
+		return new PrintedCommand(element);
 	}
 
 	private onInputPaste(event:ClipboardEvent) {

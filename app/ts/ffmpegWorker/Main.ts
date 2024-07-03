@@ -61,19 +61,23 @@ self.onmessage = async event => {
 	// prepare tty outputs
 	const ttyOutputs:Record<string, TTYOutput> = {};
 	const ttyEntries = getTTYEntries(args);
-	const {mode, rdev} = FS.stat("/dev/tty");
-	FS.mkdir(TTY_DIR);
-	for(const {arg, filename} of ttyEntries) {
-		FS.mknod(arg, mode, rdev);
-		const type = ContentType.getMimeType(filename);
-		ttyOutputs[`/${arg}`] = new TTYOutput(filename, type);
+	if(ttyEntries.length) {
+		const {mode, rdev} = FS.stat("/dev/tty");
+		FS.mkdir(TTY_DIR);
+		for(const {arg, filename} of ttyEntries) {
+			FS.mknod(arg, mode, rdev);
+			const type = ContentType.getMimeType(filename);
+			ttyOutputs[`/${arg}`] = new TTYOutput(filename, type);
+		}
 	}
 
 	// store the original content
 	const dirContent = FS.readdir("/");
 
 	module.onExit = code => {
-		const success = code >= 0;
+		if(code !== 0)
+			return post({kind:"error", code});
+
 		const files = [];
 		for(const filename of FS.readdir("/"))
 			if(!dirContent.includes(filename)) {
@@ -88,8 +92,7 @@ self.onmessage = async event => {
 			if(file)
 				files.push(file);
 		}
-
-		post({kind:"onExit", success, files});
+		post({kind:"success", files});
 	}
 	module.callMain(args);
 }

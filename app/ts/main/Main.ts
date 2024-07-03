@@ -1,4 +1,4 @@
-import * as ProcessUtil from "~util/ProcessUtil";
+import * as ProgramUtil from "~util/ProgramUtil";
 import { Shell } from "~util/Shell";
 import { Terminal } from "~util/Terminal";
 
@@ -12,7 +12,7 @@ shell.process("help", false);
 body.addEventListener("drop", event => {
 	event.preventDefault();
 	body.classList.remove("dragOver");
-	ProcessUtil.addFiles(event.dataTransfer?.files, shell.system);
+	ProgramUtil.addFiles(event.dataTransfer?.files, shell.system, new AbortController().signal);
 })
 
 body.addEventListener("dragleave", event => {

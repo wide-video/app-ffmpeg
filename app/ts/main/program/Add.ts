@@ -1,6 +1,6 @@
 import * as DOM from "~util/DOM";
-import * as ProcessUtil from "~util/ProcessUtil";
 import { Program } from "~program/Program";
+import * as ProgramUtil from "~util/ProgramUtil";
 import { System } from "~type/System";
 
 export class Add extends Program {
@@ -12,21 +12,17 @@ export class Add extends Program {
 		const files = showOpenFilePicker !== undefined
 			? await pickFileWithPicker({multiple:true})
 			: await pickFileWithInput({multiple:true});
-		ProcessUtil.addFiles(files, this.system, signal);
+		ProgramUtil.addFiles(files, this.system, signal);
 	}
 }
 
 async function pickFileWithPicker(options?:OpenFilePickerOptions):Promise<File[]> {
-	try {
-		const handles = await showOpenFilePicker(options);
-		const promises = [];
-		for(const handle of handles) 
-			if(handle.kind === "file")
-				promises.push(handle.getFile());
-		return Promise.all(promises);
-	} catch(error) {
-		return [];
-	}
+	const handles = await showOpenFilePicker(options);
+	const promises = [];
+	for(const handle of handles) 
+		if(handle.kind === "file")
+			promises.push(handle.getFile());
+	return Promise.all(promises);
 }
 
 function pickFileWithInput(options?:OpenFilePickerOptions):Promise<File[]> {
