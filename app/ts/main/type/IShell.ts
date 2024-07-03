@@ -4,6 +4,7 @@ import { Command } from "./Command";
 export type IShell = {
 	readonly programs:ReadonlyArray<Program>;
 
+	getProgram:(name:string) => Program | undefined;
 	print:(command:Command) => void;
 	subprocess:(command:Command, signal:AbortSignal) => Promise<void>;
 }

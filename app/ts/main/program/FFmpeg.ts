@@ -82,6 +82,13 @@ export class FFmpeg extends Program {
 			worker.postMessage({args, files});
 		})
 	}
+
+	override man() {
+		const name = this.name;
+		return this.joinSections(this.manTemplate({
+			description:["Universal media converter"],
+			examples:[{description:"xxx", command:`${name} -v`}]}));
+	}
 }
 
 // fixes chrome crashes when many blobs are returned
