@@ -16,8 +16,8 @@ export class Help extends Program {
 		const program = programName ? shell.getProgram(programName) : undefined;
 		const element = DOM.div("help");
 		element.innerHTML = program ? program.help() : `
-<a href="${Const.BASE_URL}" target="_blank"><strong>FFmpeg Online</strong></a> `
-+`powered by <a href="${Const.WIDE_VIDEO_URL}" target="_blank"><strong>wide.video</strong></a> `
+${strongLink(Const.BASE_URL, Const.NAME)} `
++`powered by ${strongLink(Const.WIDE_VIDEO_URL, Const.WIDE_VIDEO)} `
 +`| Free Online Video Editor
 --------------------------------------------------------------
 
@@ -34,21 +34,16 @@ ${this.joinSections([...this.manTemplate({
 		+ `or ${this.commandToHTMLStrings("fetch")} command to populate the virtual file system.`,
 		`2. Run ${this.commandToHTMLStrings("ffmpeg")} command.`,
 		`3. Save the generated output using the ${this.commandToHTMLStrings("save")} command.`,
-		`A few demo assets are available for use:${Format.NLII}${Const.ASSET.FILES
-			.map(file => this.commandToHTMLStrings(`fetch ${UrlUtil.assetUrl(file)}`))
-			.join(Format.NLII)}`]
+		`A few demo assets are available for use: ${Const.ASSET.FILES
+			.map(asset => link(UrlUtil.assetUrl(asset), asset)).join(", ")}`
+		+ `${Format.NLII}${this.commandToHTMLStrings(`fetch ${UrlUtil.assetUrl("input.mp4")}`)}`]
 
 	},
 	{name:"CONTACT", content:[`Contact for help, feedback or discussion on `
-		+ `<a href="https://discord.gg/Q54kW97yj5" target="_blank">Discord</a>, `
-		+ `<a href="https://www.facebook.com/fb.wide.video" target="_blank">Facebook</a>, `
-		+ `<a href="https://www.reddit.com/r/widevideo" target="_blank">Reddit</a>, `
-		+ `<a href="https://www.tiktok.com/@wide.video" target="_blank">TikTok</a>, `
-		+ `<a href="https://x.com/wide_video" target="_blank">X</a> or `
-		+ `<a href="https://www.youtube.com/@wide-video" target="_blank">YouTube</a>.`]},
-	{name:"COPYRIGHT", content:[`This software uses code of <a href="https://ffmpeg.org" target="_blank">FFmpeg</a> `
-		+ `licensed under the <a href="https://github.com/FFmpeg/FFmpeg/blob/master/COPYING.GPLv3" target="_blank">GPLv3</a> `
-		+ `and its source can be downloaded <a href="https://github.com/wide-video/app-ffmpeg/" target="_blank">here</a>.`]}
+		+ Object.entries(Const.SOCIAL_MEDIA).map(([label, url]) => link(url, label)).join(", ")]},
+	{name:"COPYRIGHT", content:[`This software uses code of ${link(Const.FFMPEG.ORIGIN, "FFmpeg")} `
+		+ `licensed under the ${link(Const.FFMPEG.LICENSE, "GPLv3")} `
+		+ `and its source can be downloaded ${link(Const.SOURCES_URL, "here")}.`]}
 ])}
 
 `;
@@ -56,3 +51,9 @@ ${this.joinSections([...this.manTemplate({
 		terminal.stdout(element);
 	}
 }
+
+const link = (url:string, label:string) =>
+	`<a href="${url}" target="_blank">${label}</a>`;
+
+const strongLink = (url:string, label:string) =>
+	link(url, `<strong>${label}</strong>`);

@@ -128,6 +128,9 @@ export class FFmpeg extends Program {
 				{description: "Re-encode a video using HEVC (H.265) video codec and AC3 audio codec:",
 				command: `${name} -i input.mp4 -c:v libx265 -vtag hvc1 -c:a ac3 output.mp4`},
 
+				{description: "Add a watermark to a video:",
+				command: `${name} -i input.mp4 -i logo.png -filter_complex overlay=x=50:y=50 output.mp4`},
+
 				{description: "Bypass WASM memory limitations to generate output of several GBs in size:",
 				command: `${name} -i input.mp4 -movflags empty_moov huge/output.mp4 -y`}
 			]}));
