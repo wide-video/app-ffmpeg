@@ -86,7 +86,7 @@ export class FFmpeg extends Program {
 		})
 	}
 
-	override man() {
+	override help() {
 		const name = this.name;
 		return this.joinSections(this.manTemplate({
 			description:["Universal media converter"],

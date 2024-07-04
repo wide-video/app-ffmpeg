@@ -26,7 +26,7 @@ export class Save extends Program {
 		}
 	}
 
-	override man() {
+	override help() {
 		return this.joinSections(this.manTemplate({
 			description: ["Saves files from the virtual file system to the regular file system."],
 			examples: [{description:"Save files:", command:`${this.name} a.mp4 b.mp4`}]}));

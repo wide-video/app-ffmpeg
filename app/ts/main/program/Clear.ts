@@ -10,7 +10,7 @@ export class Clear extends Program {
 		this.system.terminal.clear();
 	}
 
-	override man() {
+	override help() {
 		return this.joinSections(this.manTemplate({
 			description: ["Clears the terminal content."]}));
 	}

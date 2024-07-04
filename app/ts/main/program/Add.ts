@@ -15,7 +15,7 @@ export class Add extends Program {
 		ProgramUtil.addFiles(files, this.system, signal);
 	}
 
-	override man() {
+	override help() {
 		return this.joinSections(this.manTemplate({
 			description: ["Adds files to the virtual file system."]}));
 	}

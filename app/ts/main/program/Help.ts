@@ -13,7 +13,7 @@ export class Help extends Program {
 		const programName = args[0];
 		const program = programName ? shell.getProgram(programName) : undefined;
 		const element = DOM.div("help");
-		element.innerHTML = program ? program.man() : `
+		element.innerHTML = program ? program.help() : `
 FFmpeg Online powered by <a href="https://wide.video/" target="_blank"><strong>wide.video</strong></a> | Free Online Video Editor
 --------------------------------------------------------------
 
@@ -23,7 +23,7 @@ ${this.joinSections([...this.manTemplate({
 			{description: "Print this help:",
 			command:name},
 			{description: `Print help for an available program:`
-				+ `${Format.NLI}Available programs: ${shell.programs.map(program => this.htmlStringCommands(program.name)[0]).join(", ")}`,
+				+ `${Format.NLI}Available programs: ${shell.programs.map(program => this.commandToHTMLStrings(program.name)[0]).join(", ")}`,
 			command:`${name} <program>`}
 		]}),
 	{name:"CONTACT", content:`Contact for help, feedback or discussion on `

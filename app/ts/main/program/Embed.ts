@@ -36,7 +36,7 @@ export class Embed extends Program {
 		terminal.stdout(container);
 	}
 
-	override man() {
+	override help() {
 		return this.joinSections(this.manTemplate({
 			description: ["Displays the file in the terminal."],
 			examples: [{description:"Play video.mp4:", command:`${this.name} video.mp4`}]}));

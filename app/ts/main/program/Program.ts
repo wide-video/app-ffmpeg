@@ -17,11 +17,11 @@ export abstract class Program {
 		throw "Program not implemented";
 	}
 
-	man():string {
+	help():string {
 		throw `Help for ${this.name} is not available`;
 	}
 
-	protected htmlCommands(command:Command):[HTMLElement, ...HTMLElement[]] {
+	protected commandToHTMLElements(command:Command):[HTMLElement, ...HTMLElement[]] {
 		const parsed = CommandParser.parse(command);
 		const result = [];
 		if(parsed)
@@ -32,19 +32,19 @@ export abstract class Program {
 		return result as [HTMLElement, ...HTMLElement[]];
 	}
 
-	protected htmlStringCommands(command:Command):[string, ...string[]] {
-		return this.htmlCommands(command).map(html => html.outerHTML) as [string, ...string[]];
+	protected commandToHTMLStrings(command:Command):[string, ...string[]] {
+		return this.commandToHTMLElements(command).map(html => html.outerHTML) as [string, ...string[]];
 	}
 
 	protected manTemplate(options:TemplateOptions):Section[] {
-		const result:Section[] = [{name:"NAME", content:this.htmlStringCommands(this.name)[0]}];
+		const result:Section[] = [{name:"NAME", content:this.commandToHTMLStrings(this.name)[0]}];
 		const {description, examples} = options;
 		if(description?.length)
 			result.push({name:"DESCRIPTION", content:description.join(Format.NLNLI)});
 		if(examples?.length)
 			result.push({name:"EXAMPLES", content:examples
 				.map(({command, description}) =>
-					`${description}${Format.NLI}${this.htmlStringCommands(command)[0]}`)
+					`${description}${Format.NLI}${this.commandToHTMLStrings(command)[0]}`)
 				.join(Format.NLNLI)});
 		return result;
 	}

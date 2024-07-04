@@ -15,7 +15,7 @@ export class LS extends Program {
 			terminal.stdout(`${file.size}`.padStart(9) + ` ${file.name}`);
 	}
 
-	override man() {
+	override help() {
 		const name = this.name;
 		return this.joinSections(this.manTemplate({
 			description: ["Prints details of files in the virtual file system."],

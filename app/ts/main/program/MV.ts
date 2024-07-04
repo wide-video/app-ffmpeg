@@ -21,7 +21,7 @@ export class MV extends Program {
 		terminal.stdout(`${source} was renamed to ${target}`);
 	}
 
-	override man() {
+	override help() {
 		return this.joinSections(this.manTemplate({
 			description: ["Renames (moves) files within the virtual file system."],
 			examples: [{description:"Renames file a.mp4 to b.mp4:", command:`${this.name} a.mp4 b.mp4`}]}));

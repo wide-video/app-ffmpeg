@@ -15,7 +15,7 @@ export class Open extends Program {
 		}
 	}
 
-	override man() {
+	override help() {
 		return this.joinSections(this.manTemplate({
 			description: ["Opens a file in a new browser tab."],
 			examples: [{description:"Open file video.mp4:", command:`${this.name} video.mp4`}]}));

@@ -14,7 +14,7 @@ export class RM extends Program {
 		}
 	}
 
-	override man() {
+	override help() {
 		return this.joinSections(this.manTemplate({
 			description: ["Removes files from the virtual file system."],
 			examples: [{description:"Remove file video.mp4:", command:`${this.name} video.mp4`}]}));

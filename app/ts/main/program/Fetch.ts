@@ -55,7 +55,7 @@ export class Fetch extends Program {
 		} 
 	}
 
-	override man() {
+	override help() {
 		const name = this.name;
 		return this.joinSections(this.manTemplate({
 			description: ["Downloads a file from a URL into the virtual file system."],
