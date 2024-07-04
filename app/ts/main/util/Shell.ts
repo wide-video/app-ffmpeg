@@ -15,7 +15,6 @@ import { MV } from "~program/MV";
 import { Open } from "~program/Open";
 import { Save } from "~program/Save";
 import { System } from "~type/System";
-import { ParsedCommand } from "~type/ParsedCommand";
 import { PrintedCommand } from "./PrintedCommand";
 import { Program } from "~program/Program";
 import { ProgramName } from "~type/ProgramName";
@@ -52,22 +51,13 @@ export class Shell implements IShell {
 		return this.run(command, signal);
 	}
 
-	print(command:Command) {
-		const parsed = CommandParser.parse(command);
-		if(parsed)
-			for(const item of parsed)
-				this.stdoutCommand(command, item);
-		else
-			this.stdoutCommand(command, undefined);
-	}
-
 	private kill() {
 		this.controller?.abort("The terminal process was aborted.");
 		this.controller = undefined;
 	}
 
 	private async run(command:Command, controllerOrSignal:AbortController | AbortSignal, printCommand?:boolean) {
-		const {terminal, terminal:{prefix}} = this.system;
+		const terminal = this.system.terminal;
 		const controller = controllerOrSignal instanceof AbortController ? controllerOrSignal : undefined;
 		const signal = controllerOrSignal instanceof AbortController ? controllerOrSignal.signal : controllerOrSignal;
 		const parsed = CommandParser.parse(command);
@@ -75,16 +65,16 @@ export class Shell implements IShell {
 		
 		try {
 			if(!parsed) {
-				printCommand ? this.stdoutCommand(command, undefined, prefix) : undefined;
+				printCommand ? terminal.stdout(Format.htmlCommand(command, undefined, true)) : undefined;
 				throw "Invalid command";
 			}
 			if(controller)
 				this.controller = controller;
 			for(const item of parsed) {
-				print = printCommand ? this.stdoutCommand(command, item, prefix) : undefined;
+				print = printCommand ? terminal.stdout(Format.htmlCommand(command, item, true)) : undefined;
 				const program = this.getProgram(item.program);
 				if(!program)
-					throw `Command not found: ${name}`;
+					throw `Command not found: ${item.program}`;
 
 				print?.setState("running");
 				await program.run(item.args, signal);
@@ -100,9 +90,5 @@ export class Shell implements IShell {
 			if(controller === this.controller)
 				this.controller = undefined;
 		}
-	}
-
-	private stdoutCommand(command:string, parsed:ParsedCommand | undefined, prefix?:string) {
-		return this.system.terminal.stdout(Format.htmlCommand(command, parsed, prefix));
 	}
 }

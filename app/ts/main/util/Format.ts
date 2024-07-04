@@ -7,11 +7,14 @@ export const NL = `
 `;
 
 export const NLI = `${NL}${INDENT}`;
+export const NLII = `${NLI}${INDENT}`;
 export const NLNLI = `${NL}${NLI}`;
 export const NLNL = `${NL}${NL}`;
 
-export function htmlCommand(command:string, parsed:ParsedCommand | undefined, prefix?:string) {
-	const content:(string | Element)[] = prefix ? [prefix] : [];
+export const PREFIX = "> ";
+
+export function htmlCommand(command:string, parsed:ParsedCommand | undefined, prefix?:boolean) {
+	const content:(string | Element)[] = prefix ? [PREFIX] : [];
 	if(parsed) {
 		const {args, program} = parsed;
 		content.push(DOM.span("program", program));

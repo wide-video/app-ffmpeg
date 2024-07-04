@@ -1,5 +1,6 @@
 import { FFMPEG_WASM } from "common/Const";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
+import * as Format from "~util/Format";
 import * as ProgramUtil from "~util/ProgramUtil";
 import { Program } from "~program/Program";
 import { System } from "~type/System";``
@@ -36,6 +37,8 @@ export class FFmpeg extends Program {
 				reject(`Unexpected error: ${event.message}`);
 			}
 			worker.onmessage = event => {
+				if(signal.aborted)
+					return;
 				const data = event.data as FFmpegWorkerOut;
 				const kind = data.kind;
 				switch(kind) {
@@ -87,7 +90,39 @@ export class FFmpeg extends Program {
 		const name = this.name;
 		return this.joinSections(this.manTemplate({
 			description:["Universal media converter"],
-			examples:[{description:"xxx", command:`${name} -v`}]}));
+			examples:[
+				{description: "Print a list of basic options available in FFmpeg:",
+				command: `${name} -h`},
+
+				{description: "Extract the first 10 frames of a video:",
+				command: `${name} -i input.mp4 -vframes 10 output%03d.jpg`},
+
+				{description: "Generate a demo video using the smptehdbars and sine filters:",
+				command: `${name} -filter_complex "smptehdbars;sine=beep_factor=2" -t 5 output.mp4`},
+
+				{description: "Split the audio and video into separate files:",
+				command: `${name} -i input.mp4 -map 0:v -c:v copy output-video.mp4 -map 0:a -c:a copy output-audio.mp4`},
+
+				{description: "Trim 15 seconds from a video without re-encoding:",
+				command: `${name} -ss 00:00:10.000 -t 00:00:15.000 -i input.mp4 -c copy output.mp4`},
+
+				{description: "Concatenate multiple video files quickly without re-encoding using concat.txt:"
+					+ `${Format.NLII}file 'input1.mp4'`
+					+ `${Format.NLII}file 'input2.mp4'`,
+				command: `${name} -f concat -i concat.txt -c copy output.mp4`},
+
+				{description: "Flip a video horizontally:",
+				command: `${name} -i input.mp4 -vf hflip -c:a copy output.mp4`},
+			
+				{description: "Resize a video to a width of 1280 pixels while maintain the aspect ratio:",
+				command: `${name} -i input.mp4 -filter:v scale=1280:-2 -c:a copy output.mp4`},
+				
+				{description: "Re-encode a video using HEVC (H.265) video codec and AC3 audio codec:",
+				command: `${name} -i input.mp4 -c:v libx265 -vtag hvc1 -c:a ac3 output.mp4`},
+
+				{description: "Bypass WASM memory limitations to generate output of several GBs in size:",
+				command: `${name} -i input.mp4 -movflags empty_moov huge/output.mp4 -y`}
+			]}));
 	}
 }
 

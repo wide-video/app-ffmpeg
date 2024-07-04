@@ -21,18 +21,30 @@ export abstract class Program {
 		throw "Program not implemented";
 	}
 
+	protected htmlCommand(command:Command):[HTMLElement, ...HTMLElement[]] {
+		const parsed = CommandParser.parse(command);
+		const result = [];
+		if(parsed)
+			for(const item of parsed)
+				result.push(Format.htmlCommand(command, item));
+		else
+			result.push(Format.htmlCommand(command, undefined));
+		return result as [HTMLElement, ...HTMLElement[]];
+	}
+
 	protected manTemplate(options:TemplateOptions):Section[] {
 		const result:Section[] = [{name:"NAME", content:`<span class="program">${this.name}</span>`}];
 		const {description, examples, synopsis} = options;
 		if(synopsis?.length)
 			result.push({name:"SYNOPSIS", content:synopsis
-				.map(htmlCommand)
+				.map(command => this.htmlCommand(command)[0].outerHTML)
 				.join(Format.NLI)});
 		if(description?.length)
 			result.push({name:"DESCRIPTION", content:description.join(Format.NLNLI)});
 		if(examples?.length)
 			result.push({name:"EXAMPLES", content:examples
-				.map(({command, description}) => `${description}${Format.NLI}${htmlCommand(command)}`)
+				.map(({command, description}) =>
+					`${description}${Format.NLI}${this.htmlCommand(command)[0].outerHTML}`)
 				.join(Format.NLNLI)});
 		return result;
 	}
@@ -43,9 +55,6 @@ export abstract class Program {
 			.join(Format.NLNL);
 	}
 }
-
-const htmlCommand = (command:Command) =>
-	Format.htmlCommand(command, CommandParser.parse(command)![0]).outerHTML;
 
 type TemplateOptions = {
 	readonly synopsis?:ReadonlyArray<Command> | undefined;

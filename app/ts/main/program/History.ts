@@ -7,8 +7,9 @@ export class History extends Program {
 	}
 
 	override run() {
-		const {shell, terminal:{history}} = this.system;
-		for(const command of history.getList())
-			shell.print(command);
+		const terminal = this.system.terminal;
+		for(const command of terminal.history.getList())
+			for(const html of this.htmlCommand(command))
+				terminal.stdout(html);
 	}
 }

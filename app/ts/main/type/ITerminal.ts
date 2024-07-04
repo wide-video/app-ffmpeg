@@ -2,7 +2,6 @@ import { History } from "~util/History";
 import { PrintedCommand } from "~util/PrintedCommand";
 
 export type ITerminal = {
-	readonly prefix:string;
 	readonly history:History;
 	readonly clear:() => void;
 	readonly clearLine:() => void;

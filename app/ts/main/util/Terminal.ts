@@ -2,13 +2,13 @@ import * as AutoComplete from "~util/AutoComplete";
 import { Command } from "~type/Command";
 import * as DOM from "~util/DOM";
 import { FileSystem } from "~util/FileSystem";
+import * as Format from "~util/Format";
 import { History } from "~util/History";
 import * as HTMLUtil from "~util/HTMLUtil";
 import { ITerminal } from "~type/ITerminal";
 import { PrintedCommand } from "~util/PrintedCommand";
 
 export class Terminal implements ITerminal {
-	readonly prefix = "> ";
 	readonly history = new History();
 	readonly fileSystem:FileSystem;
 	readonly root:HTMLElement;
@@ -21,7 +21,7 @@ export class Terminal implements ITerminal {
 	private execute = (_command:Command):Promise<void> => {throw "Not Implemented"}
 
 	constructor(root:HTMLElement) {
-		const {input, log, prefix, prompt} = this;
+		const {input, log, prompt} = this;
 
 		this.fileSystem = new FileSystem();
 		this.root = root;
@@ -30,7 +30,7 @@ export class Terminal implements ITerminal {
 		input.addEventListener("paste", this.onInputPaste.bind(this));
 		input.addEventListener("input", this.onInputInput.bind(this));
 		input.addEventListener("keydown", this.onInputKeyDown.bind(this));
-		prompt.append(DOM.span("prefix", prefix), input);
+		prompt.append(DOM.span("prefix", Format.PREFIX), input);
 		DOM.clear(root);
 		root.append(log, prompt);
 		root.addEventListener("mouseup", this.onRootMouseUp.bind(this));
@@ -64,7 +64,13 @@ export class Terminal implements ITerminal {
 	private submit() {
 		const {history, input} = this;
 		const command = input.textContent as Command;
-		
+
+		if(!command.trim()) {
+			this.stdout(Format.PREFIX);
+			input.textContent = "";
+			return;
+		}
+
 		try {
 			this.execute(command).catch(() => {});
 		} catch(error) {
