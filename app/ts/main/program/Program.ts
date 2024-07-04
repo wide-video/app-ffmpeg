@@ -37,21 +37,20 @@ export abstract class Program {
 	}
 
 	protected manTemplate(options:TemplateOptions):Section[] {
-		const result:Section[] = [{name:"NAME", content:this.commandToHTMLStrings(this.name)[0]}];
+		const result:Section[] = [{name:"NAME", content:this.commandToHTMLStrings(this.name)}];
 		const {description, examples} = options;
 		if(description?.length)
-			result.push({name:"DESCRIPTION", content:description.join(Format.NLNLI)});
+			result.push({name:"DESCRIPTION", content:description});
 		if(examples?.length)
 			result.push({name:"EXAMPLES", content:examples
 				.map(({command, description}) =>
-					`${description}${Format.NLI}${this.commandToHTMLStrings(command)[0]}`)
-				.join(Format.NLNLI)});
+					`${description}${Format.NLI}${this.commandToHTMLStrings(command)[0]}`)});
 		return result;
 	}
 
 	protected joinSections(sections:ReadonlyArray<Section>) {
 		return sections
-			.map(({name, content}) => `<strong>${name}</strong>${Format.NLI}${content}`)
+			.map(({name, content}) => `<strong>${name}</strong>${Format.NLI}${content.join(Format.NLNLI)}`)
 			.join(Format.NLNL);
 	}
 }
@@ -63,7 +62,7 @@ type TemplateOptions = {
 
 type Section = {
 	readonly name:string;
-	readonly content:string;
+	readonly content:ReadonlyArray<string>;
 }
 
 type Example = {

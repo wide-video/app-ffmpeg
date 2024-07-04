@@ -1,5 +1,4 @@
 import * as ContentType from "common/ContentType";
-import { FFMPEG_WASM } from "common/Const";
 import { FFmpegWorkerIn } from "common/FFmpegWorkerIn";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
 import { TTYOutput } from "./TTYOutput";
@@ -9,16 +8,13 @@ const TTY_DIR = "huge";
 const post = (message:FFmpegWorkerOut, options?:StructuredSerializeOptions) => self.postMessage(message, options);
 
 self.onmessage = async event => {
-	const {args, files} = event.data as FFmpegWorkerIn;
-	const wasmUrl = URL.createObjectURL(files.find(file => file.name === FFMPEG_WASM.WASM_FILENAME)!);
-	const mainUrl = URL.createObjectURL(files.find(file => file.name === FFMPEG_WASM.MAIN_FILENAME)!);
-	const workerUrl = URL.createObjectURL(files.find(file => file.name === FFMPEG_WASM.WORKER_FILENAME)!);
+	const {args, files, ffmpeg} = event.data as FFmpegWorkerIn;
 
 	// Worker is module so `importScripts(ffmpegUrl)` is not available...
 	// but this little hack makes createFFmpeg available instead importScripts
 	(<any>self).define = (_:any, c:any) => (<any>self).createFFmpeg = c();
 	(<any>self).define.amd = true;
-	await import(mainUrl);
+	await import(ffmpeg.main);
 	delete (<any>self).define;
 
 	const wasmMemory = new WebAssembly.Memory({initial:2048, maximum:65536, shared:true});
@@ -43,10 +39,10 @@ self.onmessage = async event => {
 		},
 		printErr:console.log,
 		locateFile:url => {
-			if(url.endsWith(".wasm")) return wasmUrl;
-			if(url.endsWith(".worker.js")) return workerUrl;
+			if(url.endsWith(".wasm")) return ffmpeg.wasm;
+			if(url.endsWith(".worker.js")) return ffmpeg.worker;
 			return url;},
-		mainScriptUrlOrBlob:mainUrl, wasmMemory});
+		mainScriptUrlOrBlob:ffmpeg.main, wasmMemory});
 
 	const FS = module.FS;
 

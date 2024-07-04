@@ -1,9 +1,12 @@
-import { FFMPEG_WASM } from "common/Const";
+import * as BlobUtil from "~util/BlobUtil";
+import { FFMPEG } from "~/Const";
+import { FFmpegWorkerIn } from "common/FFmpegWorkerIn";
 import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
 import * as Format from "~util/Format";
 import * as ProgramUtil from "~util/ProgramUtil";
 import { Program } from "~program/Program";
-import { System } from "~type/System";``
+import { System } from "~type/System";
+import * as UrlUtil from "~util/UrlUtil";
 
 export class FFmpeg extends Program {
 	constructor(system:System) {
@@ -13,17 +16,22 @@ export class FFmpeg extends Program {
 	override run(args:ReadonlyArray<string>, signal:AbortSignal) {
 		return new Promise<void>(async (resolve, reject) => {
 			const {fileSystem, shell, terminal} = this.system;
-			const dependencies = [FFMPEG_WASM.MAIN_FILENAME, FFMPEG_WASM.WORKER_FILENAME, FFMPEG_WASM.WASM_FILENAME];
-			for(const dependency of dependencies)
+			const ffmpeg:FFmpegWorkerIn["ffmpeg"] = {...FFMPEG.FILES};
+
+			for(const [key, asset] of Object.entries(ffmpeg)) {
+				let blob;
 				try {
-					fileSystem.get(dependency);
+					blob = fileSystem.get(asset);
 				} catch(error) {
 					try {
-						await ProgramUtil.fetch(new URL(`${FFMPEG_WASM.PATH}/${dependency}`, location.href).href, shell, signal);
+						await ProgramUtil.fetch(UrlUtil.ffmpegUrl(<any>asset), shell, signal);
+						blob = fileSystem.get(asset);
 					} catch(error) {
 						return reject(error);
 					}
 				}
+				(<any>ffmpeg)[key] = BlobUtil.url(blob);
+			}
 
 			const worker = new Worker("./FFmpegWorker.js", {type:"module"});
 			signal.addEventListener("abort", () => {
@@ -81,8 +89,8 @@ export class FFmpeg extends Program {
 				}
 			}
 
-			const files = fileSystem.list;
-			worker.postMessage({args, files});
+			const message:FFmpegWorkerIn = {args, files:fileSystem.list, ffmpeg};
+			worker.postMessage(message);
 		})
 	}
 
