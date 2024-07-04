@@ -134,4 +134,13 @@ strong {
 <div id="Terminal">initializing...</div>
 </body>
 <script src="main.js" type="module"></script>
+<script>
+if(!document.location.hostname.endsWith("wv")) {
+	const script = document.createElement("script");
+	script.src = "https://beamanalytics.b-cdn.net/beam.min.js";
+	script.setAttribute("async", "");
+	script.dataset.token = "e84f95f0-8bf6-4389-b09f-14563661877c";
+	document.body.append(script);
+}
+</script>
 </html>
