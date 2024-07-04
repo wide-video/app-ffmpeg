@@ -1,0 +1,51 @@
+{
+	"dir": "ltr",
+	"lang": "en",
+	"name": "FFmpeg Online",
+	"scope": "/",
+	"display": "standalone",
+	"display_override": ["fullscreen", "minimal-ui"],
+	"start_url": "/",
+	"short_name": "FFmpeg Online",
+	"theme_color": "#1E1E1E",
+	"description": "FFmpeg Online",
+	"categories": ["productivity", "utilities"],
+	"orientation": "any",
+	"background_color": "#1E1E1E",
+	"icons": [
+		{
+			"src": "/image/manifest-icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/image/manifest-icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/image/manifest-icon-192-maskable.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/image/manifest-icon-512-maskable.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	],
+	"screenshots": [
+		{
+			"src": "/image/manifest-screenshot1.jpg",
+			"sizes": "1920x1080",
+			"type": "image/jpeg",
+			"platform": "wide",
+			"label": "Pleasant User Interface",
+			"form_factor": "wide"
+		}
+	]
+}

@@ -14,6 +14,19 @@ export class FileSystem {
 		return result;
 	}
 
+	getFilenames(patterns:ReadonlyArray<string>) {
+		const result:string[] = [];
+		loop:for(const filename of Object.keys(this.map))
+			for(const pattern of patterns) {
+				if(filename === pattern
+					|| filename.match(new RegExp(`^${pattern.replace(/[-[\]{}()+?.,\\^$|#\s]/g, '\\$&').replaceAll("*", ".+")}$`))) {
+					result.push(filename);
+					continue loop;
+				}
+			}
+		return result;
+	}
+
 	add(files:ReadonlyArray<File> | FileList) {
 		for(const file of files)
 			this.map[file.name] = file;
