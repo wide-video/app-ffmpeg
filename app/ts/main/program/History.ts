@@ -9,7 +9,12 @@ export class History extends Program {
 	override run() {
 		const terminal = this.system.terminal;
 		for(const command of terminal.history.getList())
-			for(const html of this.htmlCommand(command))
+			for(const html of this.htmlCommands(command))
 				terminal.stdout(html);
+	}
+
+	override man() {
+		return this.joinSections(this.manTemplate({
+			description: [`Prints the last ${this.system.terminal.history.max} executed commands.`]}));
 	}
 }

@@ -2,7 +2,6 @@
 
 ## TODO
 
-- `about`, `man`
 - add demo video.mp4 and add into help use fetch, concat.txt
 - mount small files as buffers
 - ffmpeg `Conversion failed!` means file already exists on FS

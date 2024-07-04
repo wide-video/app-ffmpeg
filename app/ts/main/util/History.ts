@@ -1,9 +1,10 @@
 import { Command } from "~type/Command";
 
 const KEY = "history";
-const MAX = 50;
 
 export class History {
+	readonly max = 50;
+
 	private readonly list:Command[];
 	private index:number;
 
@@ -21,10 +22,10 @@ export class History {
 	}
 
 	add(command:Command) {
-		const list = this.list;
+		const {list, max} = this;
 		list.push(command);
-		if(list.length > MAX)
-			list.splice(0, list.length - MAX);
+		if(list.length > max)
+			list.splice(0, list.length - max);
 		this.index = list.length;
 		try {
 			localStorage.setItem(KEY, JSON.stringify(list));

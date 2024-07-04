@@ -14,6 +14,11 @@ export class Add extends Program {
 			: await pickFileWithInput({multiple:true});
 		ProgramUtil.addFiles(files, this.system, signal);
 	}
+
+	override man() {
+		return this.joinSections(this.manTemplate({
+			description: ["Adds files to the virtual file system."]}));
+	}
 }
 
 async function pickFileWithPicker(options?:OpenFilePickerOptions):Promise<File[]> {

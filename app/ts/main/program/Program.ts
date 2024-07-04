@@ -18,10 +18,10 @@ export abstract class Program {
 	}
 
 	man():string {
-		throw "Program not implemented";
+		throw `Help for ${this.name} is not available`;
 	}
 
-	protected htmlCommand(command:Command):[HTMLElement, ...HTMLElement[]] {
+	protected htmlCommands(command:Command):[HTMLElement, ...HTMLElement[]] {
 		const parsed = CommandParser.parse(command);
 		const result = [];
 		if(parsed)
@@ -32,19 +32,19 @@ export abstract class Program {
 		return result as [HTMLElement, ...HTMLElement[]];
 	}
 
+	protected htmlStringCommands(command:Command):[string, ...string[]] {
+		return this.htmlCommands(command).map(html => html.outerHTML) as [string, ...string[]];
+	}
+
 	protected manTemplate(options:TemplateOptions):Section[] {
-		const result:Section[] = [{name:"NAME", content:`<span class="program">${this.name}</span>`}];
-		const {description, examples, synopsis} = options;
-		if(synopsis?.length)
-			result.push({name:"SYNOPSIS", content:synopsis
-				.map(command => this.htmlCommand(command)[0].outerHTML)
-				.join(Format.NLI)});
+		const result:Section[] = [{name:"NAME", content:this.htmlStringCommands(this.name)[0]}];
+		const {description, examples} = options;
 		if(description?.length)
 			result.push({name:"DESCRIPTION", content:description.join(Format.NLNLI)});
 		if(examples?.length)
 			result.push({name:"EXAMPLES", content:examples
 				.map(({command, description}) =>
-					`${description}${Format.NLI}${this.htmlCommand(command)[0].outerHTML}`)
+					`${description}${Format.NLI}${this.htmlStringCommands(command)[0]}`)
 				.join(Format.NLNLI)});
 		return result;
 	}
@@ -57,7 +57,6 @@ export abstract class Program {
 }
 
 type TemplateOptions = {
-	readonly synopsis?:ReadonlyArray<Command> | undefined;
 	readonly description?:ReadonlyArray<string> | undefined;
 	readonly examples?:ReadonlyArray<Example> | undefined;
 }

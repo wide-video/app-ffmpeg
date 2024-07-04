@@ -1,4 +1,5 @@
 import * as DOM from "~util/DOM";
+import * as Format from "~util/Format";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
 
@@ -17,10 +18,14 @@ FFmpeg Online powered by <a href="https://wide.video/" target="_blank"><strong>w
 --------------------------------------------------------------
 
 ${this.joinSections([...this.manTemplate({
-		synopsis:[`${name} [program]`],
-		description:[
-			`Displays detailed help information for the specified program.`,
-			`Available programs: ${shell.programs.map(program => `<span class="program">${program.name}</span>`).join(", ")}`]}),
+		description:["Print detailed help and examples for the specified program."],
+		examples:[
+			{description: "Print this help:",
+			command:name},
+			{description: `Print help for an available program:`
+				+ `${Format.NLI}Available programs: ${shell.programs.map(program => this.htmlStringCommands(program.name)[0]).join(", ")}`,
+			command:`${name} <program>`}
+		]}),
 	{name:"CONTACT", content:`Contact for help, feedback or discussion on `
 		+ `<a href="https://discord.gg/Q54kW97yj5" target="_blank">Discord</a>, `
 		+ `<a href="https://www.facebook.com/fb.wide.video" target="_blank">Facebook</a>, `

@@ -14,4 +14,10 @@ export class Open extends Program {
 			open(BlobUtil.url(file), "_blank");
 		}
 	}
+
+	override man() {
+		return this.joinSections(this.manTemplate({
+			description: ["Opens a file in a new browser tab."],
+			examples: [{description:"Open file video.mp4:", command:`${this.name} video.mp4`}]}));
+	}
 }

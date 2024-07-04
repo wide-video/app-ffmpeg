@@ -54,4 +54,13 @@ export class Fetch extends Program {
 			throw error;
 		} 
 	}
+
+	override man() {
+		const name = this.name;
+		return this.joinSections(this.manTemplate({
+			description: ["Downloads a file from a URL into the virtual file system."],
+			examples: [
+				{description:"Download url:", command:`${name} https://mydomain.com/video.mp4`},
+				{description:"Download url as video.mp4:", command:`${name} https://mydomain.com/xyz video.mp4`}]}));
+	}
 }
