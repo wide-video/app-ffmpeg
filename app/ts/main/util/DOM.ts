@@ -27,6 +27,6 @@ export function append(container:Element, content?:Content){
 			append(container, item);
 }
 
-export const clear = (element:HTMLElement) => element.replaceChildren();
+export const clear = (element:Element) => element.replaceChildren();
 
 type Content = Node | string | number | undefined | HTMLCollection | ReadonlyArray<Content>;

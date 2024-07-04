@@ -7,11 +7,11 @@
 	"display_override": ["fullscreen", "minimal-ui"],
 	"start_url": "/",
 	"short_name": "FFmpeg Online",
-	"theme_color": "#1E1E1E",
+	"theme_color": "#181818",
 	"description": "FFmpeg Online",
 	"categories": ["productivity", "utilities"],
 	"orientation": "any",
-	"background_color": "#1E1E1E",
+	"background_color": "#181818",
 	"icons": [
 		{
 			"src": "/image/manifest-icon-192.png",

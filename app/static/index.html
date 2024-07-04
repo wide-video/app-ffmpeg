@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1E1E1E">
+<meta name="theme-color" content="#181818">
 
 <title>FFmpeg Online</title>
 
@@ -39,16 +39,22 @@
 }
 
 :root {
-	--background: #1E1E1E;
-	--color: #D4D4D4;
+	--color-text: #ccc;
+	--color-background: #181818;
 	--color-error: #750000;
 	--color-running: #3b3b3b;
-	--color-command-program: #DCDCAA;
+	--color-command-program: #dcdcaa;
 	--color-command-arg: #ce9178;
 	--color-command-arg-modifier: #569cd6;
 	--color-command-arg-number: #b5cea8;
+	--color-button-text: #fff;
+	--color-button-background: #0078d4;
+	--color-button-hover-background: #026ec1;
 
-	--iconDrop: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23D4D4D4"><path d="M200-120q-33 0-56.5-23.5T120-200v-400q0-33 23.5-56.5T200-680h160v80H200v400h560v-400H600v-80h160q33 0 56.5 23.5T840-600v400q0 33-23.5 56.5T760-120H200Zm280-200L320-480l56-56 64 63v-487h80v487l64-63 56 56-160 160Z"/></svg>');
+	--padding: 8px;
+	--padding2x: 16px;
+
+	--icon-drop: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23ccc"><path d="M200-120q-33 0-56.5-23.5T120-200v-400q0-33 23.5-56.5T200-680h160v80H200v400h560v-400H600v-80h160q33 0 56.5 23.5T840-600v400q0 33-23.5 56.5T760-120H200Zm280-200L320-480l56-56 64 63v-487h80v487l64-63 56 56-160 160Z"/></svg>');
 
 	height: 100%;
 	min-height: 100%;
@@ -56,20 +62,33 @@
 
 body {
 	min-height: 100%;
-	background: var(--background);
+	background: var(--color-background);
+	font-size: 13px;
 
 	&.dragOver::after {
 		content: "";
 		display: block;
 		position: fixed;
 		inset: 0;
-		background: var(--iconDrop) no-repeat center / 10em;
+		background: var(--icon-drop) no-repeat center / 10em;
 		backdrop-filter: blur(.2em);
 	}
 }
 
 a {
 	text-decoration: underline;
+}
+
+button {
+	color: var(--color-button-text);
+	background: var(--color-button-background);
+	font-family: "Segoe WPC", "Segoe UI", sans-serif;
+	padding: var(--padding) var(--padding2x);
+	border-radius: 2px;
+
+	&:hover {
+		background: var(--color-button-hover-background);
+	}
 }
 
 strong {
@@ -79,14 +98,29 @@ strong {
 #Terminal {
 	font-family: Menlo, Monaco, "Courier New", monospace;
 	font-kerning: none;
-	font-size: 13px;
-	color: var(--color);
+	color: var(--color-text);
 	width: 100%;
 	height: 100%;
-	padding: 8px;
+	padding: var(--padding);
 	line-height: 1em; /* fixes chinese characters */
 	white-space: pre-wrap;
 	word-break: break-all;
+
+	.program {
+		color: var(--color-command-program);
+	}
+
+	.arg {
+		color: var(--color-command-arg);
+
+		&.modifier {
+			color: var(--color-command-arg-modifier);
+		}
+
+		&.number {
+			color: var(--color-command-arg-number);
+		}
+	}
 
 	> .log {
 		> :is(.stderr, .stdout) {
@@ -96,22 +130,6 @@ strong {
 
 			&.error {
 				background: var(--color-error);
-			}
-		}
-
-		.program {
-			color: var(--color-command-program);
-		}
-
-		.arg {
-			color: var(--color-command-arg);
-
-			&.modifier {
-				color: var(--color-command-arg-modifier);
-			}
-
-			&.number {
-				color: var(--color-command-arg-number);
 			}
 		}
 
@@ -127,6 +145,11 @@ strong {
 	> .prompt .input {
 		display: inline;
 	}
+}
+
+button.start {
+	position: absolute;
+	inset: var(--padding) var(--padding) auto auto;
 }
 </style>
 </head>

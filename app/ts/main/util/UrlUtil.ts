@@ -15,6 +15,14 @@ export const ffmpegUrl = (asset:FFmpegAsset) =>
 const assetPathUrl = (path:AssetPath) =>
 	new URL(path, Const.BASE_URL).href;
 
+export function getFilename(path:string) {
+	try {
+		return new URL(path, Const.BASE_URL).pathname.split("/").pop();
+	} catch(error) {
+		return;
+	}
+}
+
 type Asset = typeof ASSET_FILES[number];
 
 type FFmpegAsset = typeof FFMPEG_FILES[keyof typeof FFMPEG_FILES];

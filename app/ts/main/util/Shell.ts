@@ -9,6 +9,7 @@ import { FFmpeg } from "~program/FFmpeg";
 import * as Format from "~util/Format";
 import { Help } from "~program/Help";
 import { History } from "~program/History";
+import { Intro } from "~program/Intro";
 import { IShell } from "~type/IShell";
 import { LS } from "~program/LS";
 import { MV } from "~program/MV";
@@ -30,7 +31,7 @@ export class Shell implements IShell {
 	constructor(terminal:Terminal) {
 		const system = this.system = {fileSystem:terminal.fileSystem, shell:this, terminal};
 		this.programs = [new Add(system), new Clear(system), new CP(system), new Embed(system),
-			new Fetch(system), new FFmpeg(system), new Help(system), new History(system),
+			new Fetch(system), new FFmpeg(system), new Help(system), new History(system), new Intro(system),
 			new LS(system), new MV(system), new Open(system), new RM(system), new Save(system)];
 
 		terminal.init(this.process.bind(this), this.kill.bind(this));

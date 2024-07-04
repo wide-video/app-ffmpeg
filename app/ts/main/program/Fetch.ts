@@ -2,6 +2,7 @@ import * as BlobUtil from "~util/BlobUtil";
 import { Program } from "~program/Program";
 import * as ProgramUtil from "~util/ProgramUtil";
 import { System } from "~type/System";
+import * as UrlUtil from "~util/UrlUtil";
 
 export class Fetch extends Program {
 	constructor(system:System) {
@@ -14,7 +15,7 @@ export class Fetch extends Program {
 		if(!url)
 			throw `Missing url`;
 		try {
-			const name = filename || new URL(url).pathname.split("/").pop() || "download.bin";
+			const name = filename || UrlUtil.getFilename(url) || "download.bin";
 			const response = await fetch(url, {signal});
 			if(!response.ok)
 				throw `Failed to Fetch: ${response.status} ${response.statusText}`;
