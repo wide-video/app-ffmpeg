@@ -9,7 +9,7 @@ import { Terminal } from "~util/Terminal";
 const body = document.body;
 const root = document.getElementById("Terminal")!;
 
-function init(command:Command, printCommand:boolean) {
+async function init(command:Command, printCommand:boolean) {
 	const terminal = new Terminal(root);
 	const shell = new Shell(terminal);
 	terminal.focus();
@@ -32,7 +32,8 @@ function init(command:Command, printCommand:boolean) {
 	
 	body.addEventListener("mouseup", terminal.focus.bind(terminal));
 
-	shell.process(command, printCommand);
+	await shell.process("bootstrap -quiet", false).catch(() => {});
+	await shell.process(command, printCommand).catch(() => {});
 }
 
 try {

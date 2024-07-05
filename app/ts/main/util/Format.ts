@@ -31,3 +31,9 @@ export function htmlCommand(command:string, parsed:ParsedCommand | undefined, pr
 	}
 	return DOM.span("command", content);
 }
+
+export const link = (url:string, label:string) =>
+	`<a href="${url}" target="_blank">${label}</a>`;
+
+export const strongLink = (url:string, label:string) =>
+	link(url, `<strong>${label}</strong>`);

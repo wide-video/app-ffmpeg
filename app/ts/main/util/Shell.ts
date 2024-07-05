@@ -1,4 +1,5 @@
 import { Add } from "~program/Add";
+import { Bootstrap } from "~program/Bootstrap";
 import { Clear } from "~program/Clear";
 import { Command } from "~type/Command";
 import { CP } from "~program/CP";
@@ -30,9 +31,10 @@ export class Shell implements IShell {
 
 	constructor(terminal:Terminal) {
 		const system = this.system = {fileSystem:terminal.fileSystem, shell:this, terminal};
-		this.programs = [new Add(system), new Clear(system), new CP(system), new Embed(system),
-			new Fetch(system), new FFmpeg(system), new Help(system), new History(system), new Intro(system),
-			new LS(system), new MV(system), new Open(system), new RM(system), new Save(system)];
+		const ctors:ReadonlyArray<new (system:System) => Program> = [
+			Add, Bootstrap, Clear, CP, Embed, Fetch, FFmpeg, Help, History, Intro,
+			LS, MV, Open, RM, Save];
+		this.programs = ctors.map(ctor => new ctor(system));
 
 		terminal.init(this.process.bind(this), this.kill.bind(this));
 	}
@@ -85,7 +87,7 @@ export class Shell implements IShell {
 			print?.setState("error");
 			// subprocesses bubbles the same exceptions up, but we only want to log it once
 			if(controller)
-				terminal.stderr(`${error}`);
+				terminal.stderr(error instanceof Element ? error : `${error}`);
 			throw error;
 		} finally {
 			if(controller === this.controller)
