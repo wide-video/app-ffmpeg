@@ -4,7 +4,7 @@ Run ffmpeg directly in your browser with a terminal-like interface. No installat
 
 This app is running on [ffmpeg.wide.video](https://ffmpeg.wide.video).
 
-![screenshot](app/static/image/og_image.jpg)
+[<img src="app/static/image/og_image.jpg">](https://ffmpeg.wide.video)
 
 ## Embedding
 
