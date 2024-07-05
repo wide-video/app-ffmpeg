@@ -62,8 +62,8 @@ export class FFmpeg extends Program {
 
 							const index = (indexN === -1 || ((indexR !== -1 && indexR < indexN))) ? indexR : indexN;
 							if(index === indexR)
-								terminal.clearLine();
-							terminal[kind](buffer.substring(0, index));
+								terminal.clearLine(`ffmpeg-${kind}`);
+							terminal[kind](buffer.substring(0, index), `ffmpeg-${kind}`);
 							buffers[kind] = buffer.substring(index + 1);
 						}
 						break;

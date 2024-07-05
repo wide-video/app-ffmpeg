@@ -9,17 +9,13 @@ This app is running on [ffmpeg.wide.video](https://ffmpeg.wide.video).
 ```html
 <iframe width="800" height="300"></iframe>
 <script>
+const origin = "https://ffmpeg.wide.video";
 const iframe = document.querySelector("iframe");
 const commands = [
-	`fetch https://ffmpeg.wide.video/asset/input.mp4`,
+	`fetch ${origin}/asset/input.mp4`,
 	`ffmpeg -i input.mp4 -vframes 4 -r .1 output%03d.jpg`];
 const params = {command:commands.join("\n"), placeholder:commands[1]};
 const hash = encodeURIComponent(JSON.stringify(params));
-iframe.src = `/#${hash}`;
+iframe.src = `${origin}/#${hash}`;
 </script>
 ```
-
-## TODO
-
-- ffmpeg `Conversion failed!` means file already exists on FS
-- report crbug worker returning many blobs crashes on terminate()

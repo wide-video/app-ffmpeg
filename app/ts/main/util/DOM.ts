@@ -29,4 +29,11 @@ export function append(container:Element, content?:Content){
 
 export const clear = (element:Element) => element.replaceChildren();
 
+export function setDataset(element:HTMLElement, name:string, value?:string | number | boolean | undefined) {
+	if(value === undefined)
+		delete element.dataset[name];
+	else
+		element.dataset[name] = `${value}`;
+}
+
 type Content = Node | string | number | undefined | HTMLCollection | ReadonlyArray<Content>;

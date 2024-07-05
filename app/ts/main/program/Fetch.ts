@@ -34,9 +34,9 @@ export class Fetch extends Program {
 					while(true) {
 						const {done, value} = await reader.read();
 						if(done) break;
-						loaded && terminal.clearLine();
 						loaded += value.byteLength;
-						terminal.stdout(`Fetching ${name}: ${loaded} bytes of ${contentLength} loaded.`);
+						terminal.clearLine("fetch-progress");
+						terminal.stdout(`Fetching ${name}: ${loaded} bytes of ${contentLength} loaded.`, "fetch-progress");
 						controller.enqueue(value);
 					}
 					controller.close();
@@ -46,7 +46,7 @@ export class Fetch extends Program {
 			const blob = await progressResponse.blob();
 			signal.throwIfAborted();
 
-			terminal.clearLine();
+			terminal.clearLine("fetch-progress");
 			terminal.stdout(`Fetching ${name} completed:`);
 			fileSystem.add([BlobUtil.toFile(blob, name)]);
 			ProgramUtil.ls([name], shell, signal);

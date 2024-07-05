@@ -1,9 +1,9 @@
 import * as ArgsUtil from "~util/ArgsUtil";
-import { FileSystem } from "~util/FileSystem";
 import * as HTMLUtil from "~util/HTMLUtil";
 import * as ProgramName from "~type/ProgramName";
+import { Terminal } from "~util/Terminal";
 
-export function complete(element:HTMLElement, fileSystem:FileSystem) {
+export function complete(element:HTMLElement, terminal:Terminal) {
 	const selection = getSelection();
 	if(!selection || selection.type !== "Caret")
 		return;
@@ -23,13 +23,19 @@ export function complete(element:HTMLElement, fileSystem:FileSystem) {
 				options.push(chunk);
 		}
 
-	for(const file of fileSystem.list) {
+	for(const file of terminal.fileSystem.list) {
 		const name = ArgsUtil.escape(file.name);
 		if(name.startsWith(wordBefore)) {
 			const chunk = name.substring(wordBefore.length);
 			if(chunk)
 				options.push(chunk);
 		}
+	}
+
+	if(options.length > 1) {
+		terminal.clearLine("autoComplete");
+		terminal.stdout(`Options: ${options.map(v => `…${v}`).join(", ")}`, "autoComplete");
+		return;
 	}
 
 	let chunk = options.shift();

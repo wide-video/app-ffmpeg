@@ -7,6 +7,9 @@ import { History } from "~util/History";
 import * as HTMLUtil from "~util/HTMLUtil";
 import { ITerminal } from "~type/ITerminal";
 import { PrintedCommand } from "~util/PrintedCommand";
+import { TerminalEntryKind } from "~type/TerminalEntryKind";
+
+const KEY_ENTRY_KIND = "entryKind";
 
 export class Terminal implements ITerminal {
 	readonly history = new History();
@@ -26,7 +29,7 @@ export class Terminal implements ITerminal {
 		this.fileSystem = new FileSystem();
 		this.root = root;
 
-		input.contentEditable = "true";
+		HTMLUtil.setContentEditablePlainText(input);
 		input.addEventListener("paste", this.onInputPaste.bind(this));
 		input.addEventListener("input", this.onInputInput.bind(this));
 		input.addEventListener("keydown", this.onInputKeyDown.bind(this));
@@ -49,16 +52,19 @@ export class Terminal implements ITerminal {
 		DOM.clear(this.log);
 	}
 
-	clearLine() {
-		this.log.lastChild?.remove();
+	clearLine(kind:TerminalEntryKind) {
+		const last = this.log.lastChild;
+		if(last instanceof HTMLElement && last.dataset[KEY_ENTRY_KIND] === kind)
+			last.remove();
+		
 	}
 
-	stdout(line:string | Element) {
-		return this.print(line, "stdout");
+	stdout(line:string | Element, kind?:TerminalEntryKind) {
+		return this.print(line, "stdout", kind);
 	}
 
-	stderr(line:string | Element) {
-		return this.print(line, "stderr");
+	stderr(line:string | Element, kind?:TerminalEntryKind) {
+		return this.print(line, "stderr", kind);
 	}
 
 	private submit() {
@@ -81,10 +87,11 @@ export class Terminal implements ITerminal {
 		input.textContent = "";
 	}
 
-	private print(line:string | Element, type:"stdout" | "stderr") {
+	private print(line:string | Element, type:"stdout" | "stderr", kind:TerminalEntryKind | undefined) {
 		const body = document.body;
 		const isBottom = window.scrollY >= (body.scrollHeight - body.clientHeight - 10);
 		const element = DOM.div(type, line);
+		DOM.setDataset(element, KEY_ENTRY_KIND, kind);
 		this.log.append(element);
 		if(isBottom)
 			HTMLUtil.scrollToBottom();
@@ -101,20 +108,21 @@ export class Terminal implements ITerminal {
 	}
 
 	private onInputKeyDown(event:KeyboardEvent) {
-		const {fileSystem, history, input} = this;
+		const {history, input} = this;
 		switch(event.key) {
 			case "ArrowUp":
-				if(HTMLUtil.caretAtStart()) {
+				if(HTMLUtil.caretAtTop(input)) {
 					event.preventDefault();
 					input.textContent = history.move(-1) ?? "";
+					HTMLUtil.caretToEnd(input.lastChild ?? input);
 					HTMLUtil.scrollToBottom();
 				}
 				break;
 			case "ArrowDown":
-				if(HTMLUtil.caretAtEnd()) {
+				if(HTMLUtil.caretAtBottom(input)) {
 					event.preventDefault();
 					input.textContent = history.move(1) ?? "";
-					HTMLUtil.caretToEnd(input);
+					HTMLUtil.caretToEnd(input.lastChild ?? input);
 					HTMLUtil.scrollToBottom();
 				}
 				break;
@@ -128,7 +136,7 @@ export class Terminal implements ITerminal {
 				break;
 			case "Tab":
 				event.preventDefault();
-				AutoComplete.complete(input, fileSystem);
+				AutoComplete.complete(input, this);
 		}
 	}
 
