@@ -32,13 +32,7 @@ export function complete(element:HTMLElement, terminal:Terminal) {
 		}
 	}
 
-	if(options.length > 1) {
-		terminal.clearLine("autoComplete");
-		terminal.stdout(`Options: ${options.map(v => `…${v}`).join(", ")}`, "autoComplete");
-		return;
-	}
-
-	let chunk = options.shift();
+	let chunk = options[0];
 	if(!chunk)
 		return;
 
@@ -50,10 +44,18 @@ export function complete(element:HTMLElement, terminal:Terminal) {
 				break;
 			newChunk += chunk[i];
 		}
-		if(!newChunk)
-			return;
 		chunk = newChunk;
+		if(!newChunk)
+			break;
 	}
+
+	if(options.length > 1) {
+		terminal.clearLine("autoComplete");
+		terminal.stdout(`Options: ${options.map(v => `…${v.substring(chunk.length)}`).join(", ")}`, "autoComplete");
+	}
+
+	if(!chunk)
+		return;
 
 	const newBefore = `${textBefore}${chunk}`;
 	element.textContent = `${newBefore}${textAfter}`;
