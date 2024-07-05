@@ -1,6 +1,6 @@
 export type FFmpegWorkerOut = {
 	readonly kind:"error";
-	readonly code:number;
+	readonly messageOrCode:string | number;
 } | {
 	readonly kind:"success";
 	readonly files:ReadonlyArray<File>;

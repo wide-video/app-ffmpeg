@@ -70,7 +70,10 @@ export class FFmpeg extends Program {
 					}
 					case "error": {
 						terminate(worker);
-						reject(`Process finished with exit code ${data.code}`);
+						const messageOrCode = data.messageOrCode;
+						reject(typeof messageOrCode === "string"
+							? messageOrCode
+							: `Process finished with exit code ${messageOrCode}`);
 						break;
 					}
 					case "success": {

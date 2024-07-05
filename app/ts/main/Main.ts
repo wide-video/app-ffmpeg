@@ -32,8 +32,10 @@ async function init(command:Command, printCommand:boolean) {
 	
 	body.addEventListener("mouseup", terminal.focus.bind(terminal));
 
-	await shell.process("bootstrap -quiet", false).catch(() => {});
-	await shell.process(command, printCommand).catch(() => {});
+	try {
+		await shell.process("bootstrap -quiet", false);
+		await shell.process(command, printCommand);
+	} catch(error) {}
 }
 
 try {

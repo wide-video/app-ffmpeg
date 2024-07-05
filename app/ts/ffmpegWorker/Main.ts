@@ -37,7 +37,9 @@ self.onmessage = async event => {
 				output.push(buffer.slice(offset, offset + length).buffer);
 			return true;
 		},
-		printErr:console.log,
+		printErr:message=> {
+			post({kind:"error", messageOrCode:message})
+		},
 		locateFile:url => {
 			if(url.endsWith(".wasm")) return ffmpeg.wasm;
 			if(url.endsWith(".worker.js")) return ffmpeg.worker;
@@ -72,7 +74,7 @@ self.onmessage = async event => {
 
 	module.onExit = code => {
 		if(code !== 0)
-			return post({kind:"error", code});
+			return post({kind:"error", messageOrCode:code});
 
 		const files = [];
 		for(const filename of FS.readdir("/"))
