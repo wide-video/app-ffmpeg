@@ -9,6 +9,7 @@ export const FFMPEG = <const>{
 	ORIGIN: "https://ffmpeg.org",
 	LICENSE: "https://github.com/FFmpeg/FFmpeg/blob/master/COPYING.GPLv3",
 	DIR: "ffmpeg-wasm-0.9.1",
+	WORKER_ID: "ffmpegWorker",
 	FILES: {
 		wasm: "ffmpeg-gpl-simd.wasm",
 		main: "ffmpeg-gpl-simd-wv.js",

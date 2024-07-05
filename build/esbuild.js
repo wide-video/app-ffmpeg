@@ -5,7 +5,6 @@ const terser = require("terser");
 
 const argv = process.argv;
 const production = argv.includes("--production");
-const quiet = argv.includes("--quiet")
 const watch = argv.includes("--watch");
 const appPath = "app";
 const staticPath = `${appPath}/static`;
@@ -13,21 +12,41 @@ const distPath = "dist";
 
 const c_red = text => `\x1b[31m${text}\x1b[0m`;
 const c_green = text => `\x1b[32m${text}\x1b[0m`;
-const formatSize = value => `${(value/1024/1024).toFixed(1)} MiB`;
+const formatSize = value => `${(value/1024).toFixed(1)} KiB`;
 
-function prepare() {
+function reset() {
+	fs.rmSync(distPath, {recursive:true});
+}
+
+function finalize(optionsList) {
 	if(!fs.existsSync(distPath))
 		fs.mkdirSync(distPath, {});
 	fs.cpSync(staticPath, distPath, {recursive:true});
+
+	for(const {outfile} of optionsList) {
+		try {
+			const filename = outfile.split("/").pop();
+			const sourcePath = `${distPath}/index.html`;
+			const sourceContent = fs.readFileSync(sourcePath, "utf8");
+			const search = `{${filename}}`;
+			const index = sourceContent.indexOf(search);
+			if(index >= 0) {
+				const newContent = sourceContent.substring(0, index)
+					+ fs.readFileSync(outfile, "utf8")
+					+ sourceContent.substring(index + search.length)
+				fs.writeFileSync(sourcePath, newContent);
+			}
+			fs.unlinkSync(outfile);
+		} catch(error) {
+			console.log(error);
+		}
+	}
+	console.log("DONE\n");
 }
 
 async function run() {
-	prepare();
-	const log = quiet ? () => {} : message => console.log(message ?? "");
+	reset();
 	const modules = ["main", "ffmpegWorker"];
-
-	if(quiet)
-		log(`compile ${modules.join(",")}`);
 
 	const optionsList = modules.map(module => {
 		const modulePath = `${appPath}/ts/${module}`;
@@ -60,16 +79,16 @@ async function run() {
 						
 						const duration = (performance.now() - start) | 0;
 						if(errors) {
-							log(`compiled with ${c_red(errors + " errors")} in ${duration} ms`);
+							console.log(`compiled with ${c_red(errors + " errors")} in ${duration} ms`);
 							if(!watch)
 								throw `${errors} errors`;
-							log();
+							console.log();
 							return;
 						}
 
 						const size = fs.statSync(outfile).size;
-						log(`asset ${c_green(filename)} ${formatSize(size)} [emitted]`);
-						log(`compiled ${c_green("successfully")} in ${duration} ms`);
+						console.log(`asset ${c_green(filename)} ${formatSize(size)} [emitted]`);
+						console.log(`compiled ${c_green("successfully")} in ${duration} ms`);
 						
 						if(production) {
 							const start = performance.now();
@@ -77,10 +96,9 @@ async function run() {
 							const {code:result} = terser.minify_sync(source);
 							fs.writeFileSync(outfile, result);
 							const duration = (performance.now() - start) | 0;
-							if(!quiet)
-								log(`minified to ${formatSize(result.length)} in ${duration} ms`);
+							console.log(`minified to ${formatSize(result.length)} in ${duration} ms`);
 						}
-						log();
+						console.log();
 					})
 				}
 			}],
@@ -90,13 +108,16 @@ async function run() {
 
 	if(watch) {
 		const contexts = [];
+		let id = 0;
 		for(const options of optionsList)
 			contexts.push(await esbuild.context(options));
 		const rebuild = async () => {
 			try {
-				prepare();
+				const currentID = ++id;
 				for(const context of contexts)
 					await context.rebuild();
+				if(currentID === id)
+					finalize(optionsList);
 			} catch(error) {}
 		}
 		await rebuild();
@@ -106,6 +127,7 @@ async function run() {
 	} else {
 		for(const options of optionsList)
 			await esbuild.build(options);
+		finalize(optionsList);
 	}
 }
 

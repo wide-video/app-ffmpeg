@@ -162,7 +162,8 @@ button.start {
 <body>
 <div id="Terminal">initializing...</div>
 </body>
-<script src="main.js" type="module"></script>
+<script type="javascript/worker" id="ffmpegWorker">{ffmpegWorker.js}</script>
+<script type="module">{main.js}</script>
 <script>
 if(!document.location.hostname.endsWith("wv")) {
 	const script = document.createElement("script");

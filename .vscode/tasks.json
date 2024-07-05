@@ -9,6 +9,13 @@
 			"group": "build",
 		},
 		{
+			"label": "Release",
+			"type": "shell",
+			"command": "node ./build/esbuild.js --production",
+			"problemMatcher": ["$esbuild-watch"],
+			"group": "build",
+		},
+		{
 			"label": "Lint main",
 			"type": "shell",
 			"command": "npx eslint --parser-options=project:./app/ts/main/tsconfig.json --ext .ts app/ts/main",

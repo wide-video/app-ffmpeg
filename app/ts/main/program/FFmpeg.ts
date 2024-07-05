@@ -8,6 +8,9 @@ import { Program } from "~program/Program";
 import { System } from "~type/System";
 import * as UrlUtil from "~util/UrlUtil";
 
+const content = document.getElementById(FFMPEG.WORKER_ID)!.textContent!;
+const URL = BlobUtil.url(new Blob([content], {type:"text/javascript"}));
+
 export class FFmpeg extends Program {
 	constructor(system:System) {
 		super("ffmpeg", system);
@@ -33,7 +36,7 @@ export class FFmpeg extends Program {
 				(<any>ffmpeg)[key] = BlobUtil.url(blob);
 			}
 
-			const worker = new Worker("./FFmpegWorker.js", {type:"module"});
+			const worker = new Worker(URL, {type:"module"});
 			signal.addEventListener("abort", () => {
 				terminate(worker);
 				reject(signal.reason);
