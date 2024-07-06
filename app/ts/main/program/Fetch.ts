@@ -1,6 +1,6 @@
 import * as BlobUtil from "~util/BlobUtil";
+import * as ContentType from "common/ContentType";
 import { Program } from "~program/Program";
-import * as ProgramUtil from "~util/ProgramUtil";
 import { System } from "~type/System";
 import * as UrlUtil from "~util/UrlUtil";
 
@@ -10,7 +10,7 @@ export class Fetch extends Program {
 	}
 
 	override async run(args:ReadonlyArray<string>, signal:AbortSignal) {
-		const {fileSystem, shell, terminal} = this.system;
+		const {fileSystem, terminal} = this.system;
 		const [url, filename] = args;
 		if(!url)
 			throw `Missing url`;
@@ -43,13 +43,16 @@ export class Fetch extends Program {
 				},
 			}));
 
-			const blob = await progressResponse.blob();
+			let blob = await progressResponse.blob();
 			signal.throwIfAborted();
 
 			terminal.clearLine("fetch-progress");
-			terminal.stdout(`Fetching ${name} completed:`);
-			fileSystem.add([BlobUtil.toFile(blob, name)]);
-			ProgramUtil.ls([name], shell, signal);
+			terminal.stdout(`Fetching ${name}: ${loaded} bytes loaded successfully.`);
+
+			const type = blob.type || ContentType.getMimeType(name);
+			if(type !== blob.type)
+				blob = BlobUtil.toBlob(blob, type);
+			fileSystem.add(name, blob);
 		} catch(error) {
 			signal.throwIfAborted();
 			throw error;

@@ -7,7 +7,7 @@ export function addFiles(files:FileList | ReadonlyArray<File> | undefined, syste
 		return;
 
 	const {fileSystem, shell, terminal} = system;
-	fileSystem.add(files);
+	fileSystem.addFiles(files);
 	terminal.stdout(`Added ${files.length} files:`);
 	ls([...files].map(file => file.name), shell, signal);
 }

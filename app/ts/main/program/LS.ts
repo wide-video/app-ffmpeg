@@ -14,7 +14,7 @@ export class LS extends Program {
 			list = list.filter(({name}) => names.includes(name));
 		}
 		for(const file of list)
-			terminal.stdout(`${file.size}`.padStart(9) + ` ${file.name}`);
+			terminal.stdout(`${file.data.size}`.padStart(9) + ` ${file.name}`);
 	}
 
 	override help() {

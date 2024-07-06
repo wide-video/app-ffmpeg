@@ -1,10 +1,12 @@
-import * as BlobUtil from "~util/BlobUtil";
+import { NamedBlob } from "common/NamedBlob";
 
 export class FileSystem {
-	private readonly map:Record<string, File> = {};
+	private readonly map:Record<string, Blob> = {};
 
-	get list() {
-		return Object.values(this.map).sort((a, b) => a.name.localeCompare(b.name));
+	get list():ReadonlyArray<NamedBlob> {
+		return Object.entries(this.map)
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([name, data]) => ({name, data}));
 	}
 
 	get(filename:string) {
@@ -27,9 +29,13 @@ export class FileSystem {
 		return result;
 	}
 
-	add(files:ReadonlyArray<File> | FileList) {
+	add(name:string, blob:Blob) {
+		this.map[name] = blob;
+	}
+
+	addFiles(files:ReadonlyArray<File> | FileList) {
 		for(const file of files)
-			this.map[file.name] = file;
+			this.add(file.name, file);
 	}
 
 	copy(source:string, target:string) {
@@ -38,8 +44,8 @@ export class FileSystem {
 		if(!target)
 			throw "Target filename missing.";
 		if(source === target)
-			throw "Source and target filenames are equal."
-		this.add([BlobUtil.toFile(this.get(source), target)]);
+			throw "Source and target filenames are equal.";
+		this.add(target, this.get(source));
 	}
 
 	remove(filename:string) {

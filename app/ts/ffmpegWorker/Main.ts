@@ -8,7 +8,7 @@ const TTY_DIR = "huge";
 const post = (message:FFmpegWorkerOut, options?:StructuredSerializeOptions) => self.postMessage(message, options);
 
 self.onmessage = async event => {
-	const {args, files, ffmpeg} = event.data as FFmpegWorkerIn;
+	const {args, blobs, ffmpeg} = event.data as FFmpegWorkerIn;
 
 	// Worker is module so `importScripts(ffmpegUrl)` is not available...
 	// but this little hack makes createFFmpeg available instead importScripts
@@ -51,7 +51,7 @@ self.onmessage = async event => {
 	// mount all blobs and symlink each to root
 	const WORKERFS = "workerfs"
 	FS.mkdir(WORKERFS);
-	FS.mount(module.WORKERFS, {files}, WORKERFS);
+	FS.mount(module.WORKERFS, {blobs}, WORKERFS);
 	for(const filename of FS.readdir(`/${WORKERFS}`))
 		if(filename !== "." && filename !== "..")
 			FS.symlink(`/${WORKERFS}/${filename}`, `/${filename}`);

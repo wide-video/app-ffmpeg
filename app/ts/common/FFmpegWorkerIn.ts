@@ -1,6 +1,8 @@
+import { NamedBlob } from "common/NamedBlob";
+
 export type FFmpegWorkerIn = {
 	readonly args:ReadonlyArray<string>;
-	readonly files:ReadonlyArray<File>;
+	readonly blobs:ReadonlyArray<NamedBlob>;
 	readonly ffmpeg:{
 		readonly wasm:string;
 		readonly main:string;

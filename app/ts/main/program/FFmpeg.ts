@@ -8,7 +8,6 @@ import { Program } from "~program/Program";
 import { System } from "~type/System";
 import * as UrlUtil from "~util/UrlUtil";
 
-
 // avoid BlobUtil.url() as blob will get GCed
 const WORKER_CONTENT = document.getElementById(FFMPEG.WORKER_ID)!.textContent!;
 const WORKER_BLOB = new Blob([WORKER_CONTENT], {type:"text/javascript"});
@@ -88,7 +87,7 @@ export class FFmpeg extends Program {
 					case "success": {
 						const files = data.files;
 						terminate(worker);
-						fileSystem.add(files);
+						fileSystem.addFiles(files);
 						if(files.length) {
 							const max = 4;
 							if(files.length > max)
@@ -101,7 +100,7 @@ export class FFmpeg extends Program {
 				}
 			}
 
-			const message:FFmpegWorkerIn = {args, files:fileSystem.list, ffmpeg};
+			const message:FFmpegWorkerIn = {args, blobs:fileSystem.list, ffmpeg};
 			worker.postMessage(message);
 		})
 	}

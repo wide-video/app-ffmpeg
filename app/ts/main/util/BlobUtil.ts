@@ -1,8 +1,5 @@
-import * as ContentType from "common/ContentType";
-
-export function toFile(source:Blob, filename:string):File {
-	const type = source.type || ContentType.getMimeType(filename);
-	return new File([source], filename, type ? {type} : undefined);
+export function toBlob(source:Blob, type?:string):Blob {
+	return new Blob([source], type ? {type} : undefined);
 }
 
 const urlMap = new WeakMap<Blob, string>();
