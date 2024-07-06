@@ -9,7 +9,7 @@ export class Add extends Program {
 	}
 
 	override async run(_args:ReadonlyArray<string>, signal:AbortSignal) {
-		const files = showOpenFilePicker !== undefined
+		const files = typeof showOpenFilePicker === "function"
 			? await pickFileWithPicker({multiple:true})
 			: await pickFileWithInput({multiple:true});
 		ProgramUtil.addFiles(files, this.system, signal);
@@ -31,16 +31,9 @@ async function pickFileWithPicker(options?:OpenFilePickerOptions):Promise<File[]
 }
 
 function pickFileWithInput(options?:OpenFilePickerOptions):Promise<File[]> {
-	return new Promise(resolve => {
-		const complete = () => {
-			input.removeEventListener("change", complete);
-			document.body.removeEventListener("mousemove", complete);
-			resolve(input.files?.length ? Array.from(input.files) : []);
-		}
-		const onWindowFocus = () => {
-			window.removeEventListener("focus", onWindowFocus);
-			setTimeout(complete, 100);
-		}
+	return new Promise((resolve, reject) => {
+		const controller = new AbortController();
+		const signal = controller.signal;
 		const input = DOM.input();
 		input.type = "file";
 		if(options?.multiple)
@@ -51,9 +44,18 @@ function pickFileWithInput(options?:OpenFilePickerOptions):Promise<File[]> {
 				Object.keys(type.accept).forEach(key => 
 					input.accept += `${key},${type.accept[key]?.join(",")}`));
 		}
-		input.addEventListener("change", complete);
+		input.addEventListener("change", () => {
+			controller.abort();
+			resolve(input.files?.length ? Array.from(input.files) : []);
+		}, {signal});
+		document.body.addEventListener("mousemove", () => {
+			controller.abort();
+			reject("The user aborted a request.");
+		}, {signal});
+		window.addEventListener("focus", () => setTimeout(() => {
+			controller.abort();
+			reject("The user aborted a request.");
+		}, 100), {signal});
 		input.click();
-		document.body.addEventListener("mousemove", complete);
-		window.addEventListener("focus", onWindowFocus);
 	})
 }

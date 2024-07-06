@@ -13,7 +13,7 @@ export function complete(element:HTMLElement, terminal:Terminal) {
 		return;
 
 	const textAfter = element.textContent?.substring(selection.anchorOffset) ?? "";
-	const wordBefore = textBefore.split(/\s+/).pop() ?? textBefore;
+	const wordBefore = textBefore.split(/(^|[^\\])\s+/).pop() ?? textBefore;
 
 	const options = [];
 	for(const program of ProgramName.LIST)

@@ -12,7 +12,7 @@ export class Save extends Program {
 		const {fileSystem} = this.system;
 		for(const filename of args) {
 			const file = fileSystem.get(filename);
-			if(showSaveFilePicker) {
+			if(typeof showSaveFilePicker === "function") {
 				const handle = await showSaveFilePicker({suggestedName:filename});
 				const writable = await handle.createWritable();
 				await writable.write(file);

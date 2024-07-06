@@ -1,3 +1,3 @@
 # TODO
 
-- firefox and safari support
+- test safari support

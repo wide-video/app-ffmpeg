@@ -90,9 +90,10 @@ export class FFmpeg extends Program {
 						fileSystem.addFiles(files);
 						if(files.length) {
 							const max = 4;
-							if(files.length > max)
-								terminal.stdout(`Embedding ${Math.min(max, files.length)} of ${files.length} outputs:`);
-							ProgramUtil.embed(files.slice(0, max).map(file => file.name), shell, signal);
+							const known = files.filter(file => file.type);
+							if(known.length > max)
+								terminal.stdout(`Embedding ${Math.min(max, known.length)} of ${files.length} outputs:`);
+							ProgramUtil.embed(known.slice(0, max).map(file => file.name), shell, signal);
 						}
 						resolve();
 						break;
