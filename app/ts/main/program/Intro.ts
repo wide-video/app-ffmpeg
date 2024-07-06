@@ -22,9 +22,9 @@ Run ffmpeg directly in your browser with a terminal-like interface. No installat
 
 ${this.joinSections([
 	{name:"USAGE", content:[`1. Drag and drop files into the terminal or use the ${this.commandToHTMLStrings("add")} `
-		+ `or ${this.commandToHTMLStrings("fetch")} command to populate the virtual file system.`,
-		`2. Run ${this.commandToHTMLStrings("ffmpeg")} command.`,
-		`3. Save the generated output using the ${this.commandToHTMLStrings("save")} command.`,
+		+ `or ${this.commandToHTMLStrings("fetch")} command to populate the virtual file system.`
+		+ `${Format.NLI}2. Run ${this.commandToHTMLStrings("ffmpeg …")} command.`
+		+ `${Format.NLI}3. Save the generated output using the ${this.commandToHTMLStrings("save")} command.`,
 		`Demo assets available for use: ${Const.ASSET.FILES
 			.map(asset => Format.link(UrlUtil.assetUrl(asset), asset)).join(", ")}`
 		+ `${Format.NLII}${this.commandToHTMLStrings(`fetch ${UrlUtil.assetUrl("input.mp4")}`)}`,

@@ -51,7 +51,8 @@ export function complete(element:HTMLElement, terminal:Terminal) {
 
 	if(options.length > 1) {
 		terminal.clearLine("autoComplete");
-		terminal.stdout(options.map(v => `…${v.substring(chunk.length)}`).join(", "), "autoComplete");
+		terminal.stdout(options.map(v => `…${v.substring(chunk.length)}`)
+			.filter(v => v.length > 1).join(", "), "autoComplete");
 	}
 
 	if(!chunk)

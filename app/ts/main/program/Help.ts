@@ -19,7 +19,7 @@ export class Help extends Program {
 				examples:[
 					{description: "Print this help:",
 					command:name},
-					{description: `Print help for an available program:`
+					{description: `Print help for a program:`
 						+ `${Format.NLI}Available programs: ${shell.programs.map(program => this.commandToHTMLStrings(program.name)[0]).join(", ")}`,
 					command:`${name} <program>`}]}));
 		terminal.stdout(element);

@@ -146,10 +146,12 @@ export class FFmpeg extends Program {
 	}
 }
 
-// fixes chrome crashes when many blobs are returned
+// chrome crashes with "STATUS_ACCESS_VIOLATION"  on instant terminate() when many blobs are returned i.e.
+// `ffmpeg -i input.mp4 -vframes 20 output%03d.jpg`
+// I am not able to isolate the issue without using ffmpeg-wasm, so no crbug yet...
 function terminate(worker:Worker) {
 	setTimeout(() => {
 		try {
 			worker.terminate();
-		} catch(error) {}}, 500);
+		} catch(error) {}}, 100);
 }
