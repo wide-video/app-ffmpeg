@@ -74,9 +74,12 @@ export class FFmpeg extends Program {
 					case "error": {
 						terminate(worker);
 						const messageOrCode = data.messageOrCode;
-						reject(typeof messageOrCode === "string"
-							? messageOrCode
-							: `Process finished with exit code ${messageOrCode}`);
+						if(typeof messageOrCode === "string")
+							return reject(messageOrCode);
+						const message = `Process finished with exit code ${messageOrCode}.`;
+						if(messageOrCode === -29) // "Conversion failed!
+							return reject(`${message} This might be due to the output file already existing.`);
+						reject(message);
 						break;
 					}
 					case "success": {
