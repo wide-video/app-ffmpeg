@@ -1,10 +1,17 @@
 # FFmpeg Online
 
-Run ffmpeg directly in your browser with a terminal-like interface. No installations needed. Convert, edit, and process multimedia files with this powerful web-based tool.
+FFmpeg Online is a web-based application that allows you to run FFmpeg commands directly in your browser. The UI resembles a classic system terminal.
 
-This app is running on [ffmpeg.wide.video](https://ffmpeg.wide.video).
+To start using FFmpeg Online, simply visit [ffmpeg.wide.video](https://ffmpeg.wide.video).
 
 [<img src="app/static/image/og_image.jpg">](https://ffmpeg.wide.video)
+
+## Features
+
+- **Runs in Browser**: Execute FFmpeg commands directly from your web browser without the need to install FFmpeg.
+- **Privacy and Security**: Local files are processed directly in your browser and are never uploaded to any server.
+- **Classic Terminal UI**: User interface mimics a traditional system terminal, making it easy to use for those familiar with command-line interfaces.
+- **Built-in Help**: Access built-in help with example FFmpeg commands for common tasks, making it easier to get started.
 
 ## Embedding
 
