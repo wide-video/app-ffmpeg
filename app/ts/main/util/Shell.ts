@@ -19,6 +19,7 @@ import { Save } from "~program/Save";
 import { System } from "~type/System";
 import { PrintedCommand } from "./PrintedCommand";
 import { Program } from "~program/Program";
+import { ProgramAliasName } from "~/type/ProgramAliasName";
 import { ProgramName } from "~type/ProgramName";
 import { RM } from "~program/RM";
 import { Terminal } from "~util/Terminal";
@@ -40,8 +41,15 @@ export class Shell implements IShell {
 	}
 
 	getProgram(name:string) {
+		const programs = this.programs;
 		const programName = name.toLowerCase() as ProgramName;
-		return this.programs.find(program => program.name === programName);
+		for(const program of programs)
+			if(program.name === programName)
+				return program;
+		for(const program of programs)
+			if(program.alias?.includes(programName as ProgramAliasName))
+				return program;
+		return;
 	}
 
 	process(command:Command, printCommand=true) {
