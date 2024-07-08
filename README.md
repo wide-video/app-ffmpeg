@@ -13,10 +13,12 @@ To start using FFmpeg Online, simply visit [ffmpeg.wide.video](https://ffmpeg.wi
 - **Classic Terminal UI**: User interface mimics a traditional system terminal, making it easy to use for those familiar with command-line interfaces.
 - **Built-in Help**: Access built-in help with example FFmpeg commands for common tasks, making it easier to get started.
 
-## Embedding
+## Embedding in Your Website
+
+You can easily embed FFmpeg Online in your website using an `<iframe>`. Here’s how you can do it:
 
 ```html
-<iframe width="800" height="300"></iframe>
+<iframe width="600" height="100"></iframe>
 <script>
 const origin = "https://ffmpeg.wide.video";
 const iframe = document.querySelector("iframe");
@@ -28,3 +30,7 @@ const hash = encodeURIComponent(JSON.stringify(params));
 iframe.src = `${origin}/#${hash}`;
 </script>
 ```
+
+Here's an example of how it will look:
+
+<img src="app/static/image/embed.png">
