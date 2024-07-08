@@ -1,4 +1,4 @@
-import { NamedBlob } from "common/NamedBlob";
+import { NamedBlob } from "common/type/NamedBlob";
 
 export class FileSystem {
 	private readonly map:Record<string, Blob> = {};

@@ -1,5 +1,5 @@
 import * as BlobUtil from "~util/BlobUtil";
-import * as ContentType from "common/ContentType";
+import * as ContentType from "common/util/ContentType";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
 import * as UrlUtil from "~util/UrlUtil";

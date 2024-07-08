@@ -1,4 +1,4 @@
-import { NamedBlob } from "common/NamedBlob";
+import { NamedBlob } from "common/type/NamedBlob";
 
 export type FFmpegWorkerIn = {
 	readonly args:ReadonlyArray<string>;

@@ -1,9 +1,8 @@
-import * as ContentType from "common/ContentType";
-import { FFmpegWorkerIn } from "common/FFmpegWorkerIn";
-import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
+import * as Const from "common/Const";
+import * as ContentType from "common/util/ContentType";
+import { FFmpegWorkerIn } from "common/type/FFmpegWorkerIn";
+import { FFmpegWorkerOut } from "common/type/FFmpegWorkerOut";
 import { TTYOutput } from "./TTYOutput";
-
-const TTY_DIR = "huge";
 
 const post = (message:FFmpegWorkerOut, options?:StructuredSerializeOptions) => self.postMessage(message, options);
 
@@ -61,7 +60,7 @@ self.onmessage = async event => {
 	const ttyEntries = getTTYEntries(args);
 	if(ttyEntries.length) {
 		const {mode, rdev} = FS.stat("/dev/tty");
-		FS.mkdir(TTY_DIR);
+		FS.mkdir(Const.TTY_DIR);
 		for(const {arg, filename} of ttyEntries) {
 			FS.mknod(arg, mode, rdev);
 			const type = ContentType.getMimeType(filename);
@@ -102,7 +101,7 @@ self.onunhandledrejection = event => {
 
 function getTTYEntries(args:ReadonlyArray<string>) {
 	const result = [];
-	const prefix = `${TTY_DIR}/`;
+	const prefix = `${Const.TTY_DIR}/`;
 	for(const arg of args) {
 		if(arg.startsWith(prefix)) {
 			const filename = arg.substring(prefix.length);

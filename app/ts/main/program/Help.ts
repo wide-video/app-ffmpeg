@@ -1,9 +1,12 @@
 import * as DOM from "~util/DOM";
 import * as Format from "~util/Format";
 import { Program } from "~program/Program";
+import { ProgramAliasName } from "~/type/ProgramAliasName";
 import { System } from "~type/System";
 
 export class Help extends Program {
+	override alias:ReadonlyArray<ProgramAliasName> = ["man"];
+
 	constructor(system:System) {
 		super("help", system);
 	}
@@ -15,7 +18,7 @@ export class Help extends Program {
 		const element = DOM.div("help");
 		element.innerHTML = program	? program.help() :
 			this.joinSections(this.manTemplate({
-				description:["Print detailed help and examples for the specified program."],
+				description:["Prints detailed help and examples for the specified program."],
 				examples:[
 					{description: "Print this help:",
 					command:name},

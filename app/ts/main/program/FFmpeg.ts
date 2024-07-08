@@ -1,7 +1,8 @@
 import * as BlobUtil from "~util/BlobUtil";
+import * as Const from "common/Const";
 import { FFMPEG } from "~/Const";
-import { FFmpegWorkerIn } from "common/FFmpegWorkerIn";
-import { FFmpegWorkerOut } from "common/FFmpegWorkerOut";
+import { FFmpegWorkerIn } from "common/type/FFmpegWorkerIn";
+import { FFmpegWorkerOut } from "common/type/FFmpegWorkerOut";
 import * as Format from "~util/Format";
 import * as ProgramUtil from "~util/ProgramUtil";
 import { Program } from "~program/Program";
@@ -144,7 +145,7 @@ export class FFmpeg extends Program {
 				command: `${name} -i input.mp4 -i logo.png -filter_complex overlay=x=50:y=50 output.mp4`},
 
 				{description: "Bypass WASM memory limitations to generate output of several GBs in size:",
-				command: `${name} -i input.mp4 -movflags empty_moov huge/output.mp4 -y`}
+				command: `${name} -i input.mp4 -movflags empty_moov ${Const.TTY_DIR}/output.mp4 -y`}
 			]}));
 	}
 }

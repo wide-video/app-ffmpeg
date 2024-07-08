@@ -1,0 +1,1 @@
+export const TTY_DIR = "huge";

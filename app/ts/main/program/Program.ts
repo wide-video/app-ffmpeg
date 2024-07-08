@@ -1,11 +1,14 @@
 import { Command } from "~type/Command";
 import * as CommandParser from "~util/CommandParser";
 import * as Format from "~util/Format";
+import { ProgramAliasName } from "~/type/ProgramAliasName";
 import { ProgramName } from "~type/ProgramName";
 import { System } from "~type/System";
 
 export abstract class Program {
 	readonly name:ProgramName;
+	readonly alias:ReadonlyArray<ProgramAliasName> | undefined;
+
 	protected readonly system:System;
 
 	constructor(name:ProgramName, system:System) {
@@ -14,11 +17,11 @@ export abstract class Program {
 	}
 
 	run(_args:ReadonlyArray<string>, _signal:AbortSignal):void | Promise<void> {
-		throw "Program not implemented";
+		throw `Program ${this.name} not implemented.`;
 	}
 
 	help():string {
-		throw `Help for ${this.name} is not available`;
+		throw `Help for ${this.name} is not available.`;
 	}
 
 	protected commandToHTMLElements(command:Command):[HTMLElement, ...HTMLElement[]] {
@@ -37,7 +40,10 @@ export abstract class Program {
 	}
 
 	protected manTemplate(options:TemplateOptions):Section[] {
-		const result:Section[] = [{name:"NAME", content:this.commandToHTMLStrings(this.name)}];
+		const {alias, name} = this;
+		const result:Section[] = [{name:"NAME",
+			content:[this.commandToHTMLStrings(name)[0]
+				+ (alias?.length ? ` (${alias.map(name => this.commandToHTMLStrings(name)[0]).join(", ")})` : "")]}];
 		const {description, examples} = options;
 		if(description?.length)
 			result.push({name:"DESCRIPTION", content:description});
