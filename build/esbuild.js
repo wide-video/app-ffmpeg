@@ -15,7 +15,8 @@ const c_green = text => `\x1b[32m${text}\x1b[0m`;
 const formatSize = value => `${(value/1024).toFixed(1)} KiB`;
 
 function reset() {
-	fs.rmSync(distPath, {recursive:true});
+	if(fs.existsSync(distPath))
+		fs.rmSync(distPath, {recursive:true});
 }
 
 function finalize(optionsList) {

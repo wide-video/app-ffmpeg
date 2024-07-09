@@ -38,8 +38,14 @@
 	box-sizing: border-box;
 }
 
+/* fix firefox caret */
 *[contenteditable=true] {
 	-moz-user-modify: read-write;
+}
+
+/* fix safari caret */
+*[contenteditable=plaintext-only] {
+	-webkit-user-modify: read-write-plaintext-only;
 }
 
 :root {
