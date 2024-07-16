@@ -1,4 +1,5 @@
 import * as BlobUtil from "~util/BlobUtil";
+import * as Fix from "~util/Fix";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
 
@@ -10,7 +11,7 @@ export class Open extends Program {
 	override run(args:ReadonlyArray<string>) {
 		const {fileSystem} = this.system;
 		for(const filename of args) {
-			const file = fileSystem.get(filename);
+			const file = Fix.makeEmbeddable(fileSystem.get(filename));
 			open(BlobUtil.url(file), "_blank");
 		}
 	}

@@ -1,5 +1,6 @@
 import * as BlobUtil from "~util/BlobUtil";
 import * as DOM from "~util/DOM";
+import * as Fix from "~util/Fix";
 import { Program } from "~program/Program";
 import { System } from "~type/System";
 
@@ -15,7 +16,7 @@ export class Embed extends Program {
 
 		const container = DOM.div(name);
 		for(const filename of args) {
-			const file = fileSystem.get(filename);
+			const file = Fix.makeEmbeddable(fileSystem.get(filename));
 			const iframe = DOM.iframe();
 			iframe.src = BlobUtil.url(file);
 			iframe.addEventListener("load", () => {

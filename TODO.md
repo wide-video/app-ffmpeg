@@ -1,0 +1,1 @@
+- allow fetching custom ffmpeg version from cdn.wide.video

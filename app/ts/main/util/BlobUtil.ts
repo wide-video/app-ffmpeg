@@ -1,6 +1,5 @@
-export function toBlob(source:Blob, type?:string):Blob {
-	return new Blob([source], type ? {type} : undefined);
-}
+export const toBlob = (source:Blob, type?:string) =>
+	new Blob([source], type ? {type} : undefined);
 
 const urlMap = new WeakMap<Blob, string>();
 const urlRevoker = new FinalizationRegistry((url:string) => URL.revokeObjectURL(url));
