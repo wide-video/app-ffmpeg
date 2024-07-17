@@ -5,6 +5,7 @@ import { Command } from "~type/Command";
 import { CP } from "~program/CP";
 import * as CommandParser from "~util/CommandParser";
 import { Embed } from "~program/Embed";
+import { Env } from "~type/Env";
 import { Fetch } from "~program/Fetch";
 import { FFmpeg } from "~program/FFmpeg";
 import * as Format from "~util/Format";
@@ -16,6 +17,7 @@ import { LS } from "~program/LS";
 import { MV } from "~program/MV";
 import { Open } from "~program/Open";
 import { Save } from "~program/Save";
+import { Set } from "~program/Set";
 import { System } from "~type/System";
 import { PrintedCommand } from "./PrintedCommand";
 import { Program } from "~program/Program";
@@ -30,11 +32,11 @@ export class Shell implements IShell {
 
 	private controller:AbortController | undefined;
 
-	constructor(terminal:Terminal) {
-		const system = this.system = {fileSystem:terminal.fileSystem, shell:this, terminal};
+	constructor(env:Env, terminal:Terminal) {
+		const system = this.system = {env, fileSystem:terminal.fileSystem, shell:this, terminal};
 		const ctors:ReadonlyArray<new (system:System) => Program> = [
 			Add, Bootstrap, Clear, CP, Embed, Fetch, FFmpeg, Help, History, Intro,
-			LS, MV, Open, RM, Save];
+			LS, MV, Open, RM, Save, Set];
 		this.programs = ctors.map(ctor => new ctor(system));
 
 		terminal.init(this.process.bind(this), this.kill.bind(this));

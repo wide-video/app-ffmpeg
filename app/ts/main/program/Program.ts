@@ -50,7 +50,7 @@ export abstract class Program {
 		if(examples?.length)
 			result.push({name:"EXAMPLES", content:examples
 				.map(({command, description}) =>
-					`${description}${Format.NLI}${this.commandToHTMLStrings(command)[0]}`)});
+					`${description}${Format.NLI}${this.commandToHTMLStrings(command).join(Format.NLI)}`)});
 		return result;
 	}
 

@@ -15,8 +15,8 @@ export function addFiles(files:FileList | ReadonlyArray<File> | undefined, syste
 export const embed = (filenames:ReadonlyArray<string>, shell:IShell, signal:AbortSignal) =>
 	shell.subprocess(`embed ${filenameArgs(filenames)}`, signal);
 
-export const fetch = (url:string, shell:IShell, signal:AbortSignal) =>
-	shell.subprocess(`fetch ${url}`, signal);
+export const fetch = (url:string, filename:string, shell:IShell, signal:AbortSignal) =>
+	shell.subprocess(`fetch ${url} ${filename}`, signal);
 
 export const ls = (filenames:ReadonlyArray<string>, shell:IShell, signal:AbortSignal) =>
 	shell.subprocess( `ls ${filenameArgs(filenames)}`, signal);

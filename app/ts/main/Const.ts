@@ -1,3 +1,5 @@
+import { FFmpegEnv } from "common/type/FFmpegEnv";
+
 export const NAME = "FFmpeg Online";
 export const BASE_URL = location.href;
 export const SOURCES_URL = "https://github.com/wide-video/app-ffmpeg/";
@@ -14,6 +16,11 @@ export const FFMPEG = <const>{
 		wasm: "ffmpeg-gpl-simd.wasm",
 		main: "ffmpeg-gpl-simd-wv.js",
 		worker: "ffmpeg-gpl-simd.worker.js"
+	},
+	LGPL: <FFmpegEnv>{
+		FFMPEG_MAIN_URL: "https://cdn.wide.video/ffmpeg/0.9.1/ffmpeg-lgpl-simd-wv.js",
+		FFMPEG_WASM_URL: "https://cdn.wide.video/ffmpeg/0.9.1/ffmpeg-lgpl-simd.wasm",
+		FFMPEG_WORKER_URL: "https://cdn.wide.video/ffmpeg/0.9.1/ffmpeg-lgpl-simd.worker.js"
 	}
 }
 

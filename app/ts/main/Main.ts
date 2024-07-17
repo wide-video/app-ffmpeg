@@ -1,17 +1,24 @@
 import { Command } from "~type/Command";
 import * as CommandParser from "~util/CommandParser";
 import * as DOM from "~util/DOM";
+import { Env } from "~type/Env";
+import { FFMPEG } from "~/Const";
 import * as Format from "~util/Format";
 import * as ProgramUtil from "~util/ProgramUtil";
 import { Shell } from "~util/Shell";
 import { Terminal } from "~util/Terminal";
+import * as UrlUtil from "~util/UrlUtil";
 
 const body = document.body;
 const root = document.getElementById("Terminal")!;
 
 async function init(command:Command, printCommand:boolean) {
+	const env:Env = {
+		FFMPEG_MAIN_URL: UrlUtil.ffmpegUrl(FFMPEG.FILES.main),
+		FFMPEG_WASM_URL: UrlUtil.ffmpegUrl(FFMPEG.FILES.wasm),
+		FFMPEG_WORKER_URL: UrlUtil.ffmpegUrl(FFMPEG.FILES.worker)};
 	const terminal = new Terminal(root);
-	const shell = new Shell(terminal);
+	const shell = new Shell(env, terminal);
 	terminal.focus();
 
 	body.addEventListener("drop", event => {

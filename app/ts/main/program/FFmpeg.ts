@@ -1,6 +1,7 @@
 import * as BlobUtil from "~util/BlobUtil";
 import * as Const from "common/Const";
 import { FFMPEG } from "~/Const";
+import { FFmpegEnv } from "common/type/FFmpegEnv";
 import { FFmpegWorkerIn } from "common/type/FFmpegWorkerIn";
 import { FFmpegWorkerOut } from "common/type/FFmpegWorkerOut";
 import * as Format from "~util/Format";
@@ -21,22 +22,28 @@ export class FFmpeg extends Program {
 
 	override run(args:ReadonlyArray<string>, signal:AbortSignal) {
 		return new Promise<void>(async (resolve, reject) => {
-			const {fileSystem, shell, terminal} = this.system;
-			const ffmpeg:FFmpegWorkerIn["ffmpeg"] = {...FFMPEG.FILES};
+			const {env, fileSystem, shell, terminal} = this.system;
+			const ffmpegEnv:FFmpegEnv = {
+				FFMPEG_MAIN_URL: env.FFMPEG_MAIN_URL,
+				FFMPEG_WASM_URL: env.FFMPEG_WASM_URL,
+				FFMPEG_WORKER_URL: env.FFMPEG_WORKER_URL};
 
-			for(const [key, asset] of Object.entries(ffmpeg)) {
+			for(const [variable, url] of Object.entries(ffmpegEnv)) {
+				const filename = UrlUtil.getFilename(url);
+				if(!filename)
+					return reject(`Filename not parsable from url ${url} set on variable ${variable}.`)
 				let blob;
 				try {
-					blob = fileSystem.get(asset);
+					blob = fileSystem.get(filename);
 				} catch(error) {
 					try {
-						await ProgramUtil.fetch(UrlUtil.ffmpegUrl(<any>asset), shell, signal);
-						blob = fileSystem.get(asset);
+						await ProgramUtil.fetch(url, filename, shell, signal);
+						blob = fileSystem.get(filename);
 					} catch(error) {
 						return reject(error);
 					}
 				}
-				(<any>ffmpeg)[key] = BlobUtil.url(blob);
+				(<any>ffmpegEnv)[variable] = BlobUtil.url(blob);
 			}
 
 			const worker = new Worker(WORKER_URL, {type:"module"});
@@ -102,7 +109,7 @@ export class FFmpeg extends Program {
 				}
 			}
 
-			const message:FFmpegWorkerIn = {args, blobs:fileSystem.list, ffmpeg};
+			const message:FFmpegWorkerIn = {args, blobs:fileSystem.list, env:ffmpegEnv};
 			worker.postMessage(message);
 		})
 	}
