@@ -4,6 +4,7 @@ Header set Access-Control-Expose-Headers *
 Header set Cache-Control "public, max-age=604800, s-maxage=604800, immutable"
 Header set Cross-Origin-Opener-Policy same-origin
 Header set Cross-Origin-Embedder-Policy require-corp
+Header set Cross-Origin-Resource-Policy cross-origin
 
 RewriteEngine On
 

@@ -1,0 +1,1 @@
+- [showOpenFilePicker and showSaveFilePicker are not available in <iframe>](https://github.com/WICG/file-system-access/issues/245) but Puter has its own https://docs.puter.com/UI/showSaveFilePicker/

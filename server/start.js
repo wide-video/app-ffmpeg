@@ -35,6 +35,7 @@ function server(request, response) {
 		const data = fs.readFileSync(`${root}${pathname}${archive ? "." + archive : ""}`);
 		response.setHeader("Cross-Origin-Opener-Policy", "same-origin");
 		response.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+		response.setHeader("Cross-Origin-Resource-Policy", "cross-origin"); // allow running in an <iframe>
 		response.setHeader("Content-type", contentType[path.parse(pathname).ext] || "text/plain");
 		if(archive) {
 			response.setHeader("Content-Encoding", archive);

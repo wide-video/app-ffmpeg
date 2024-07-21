@@ -9,9 +9,21 @@ export class Add extends Program {
 	}
 
 	override async run(_args:ReadonlyArray<string>, signal:AbortSignal) {
-		const files = typeof showOpenFilePicker === "function"
-			? await pickFileWithPicker({multiple:true})
-			: await pickFileWithInput({multiple:true});
+		let files:File[];
+		if(typeof showOpenFilePicker === "function") {
+			try {
+				files = await pickFileWithPicker({multiple:true})
+			} catch(error) {
+				// TODO DEP https://github.com/WICG/file-system-access/issues/245
+				if(error instanceof DOMException && error.name === "SecurityError")
+					files = await pickFileWithInput({multiple:true});
+				else
+					throw error;
+			}
+		} else {
+			files = await pickFileWithInput({multiple:true})
+		}
+
 		ProgramUtil.addFiles(files, this.system, signal);
 	}
 
