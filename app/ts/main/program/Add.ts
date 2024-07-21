@@ -60,14 +60,14 @@ function pickFileWithInput(options?:OpenFilePickerOptions):Promise<File[]> {
 			controller.abort();
 			resolve(input.files?.length ? Array.from(input.files) : []);
 		}, {signal});
-		document.body.addEventListener("mousemove", () => {
+		document.body.addEventListener("mousemove", () => setTimeout(() => {
 			controller.abort();
 			reject("The user aborted a request.");
-		}, {signal});
+		}, 500), {signal});
 		window.addEventListener("focus", () => setTimeout(() => {
 			controller.abort();
 			reject("The user aborted a request.");
-		}, 100), {signal});
+		}, 500), {signal});
 		input.click();
 	})
 }
