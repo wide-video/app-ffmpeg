@@ -1,0 +1,30 @@
+Header set Access-Control-Allow-Headers *
+Header set Access-Control-Allow-Origin *
+Header set Access-Control-Expose-Headers *
+Header set Cache-Control "public, max-age=604800, s-maxage=604800, immutable"
+Header set Cross-Origin-Opener-Policy same-origin
+Header set Cross-Origin-Embedder-Policy require-corp
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{HTTP:Accept-encoding} br
+RewriteCond %{REQUEST_FILENAME}\.br -s
+RewriteRule ^(.*) $1\.br [QSA]
+
+RewriteRule \.js\.br$ - [T=text/javascript,E=no-gzip,E=no-brotli]
+RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
+
+<FilesMatch "(\.br)$">
+	Header set Content-Encoding br
+	Header append Vary Accept-Encoding
+</FilesMatch>
+
+#Generated extra
+<FilesMatch "(ffmpeg-gpl-simd-wv.js\.br)$">
+	Header set x-content-length 127139
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-simd.wasm\.br)$">
+	Header set x-content-length 40283200
+</FilesMatch>

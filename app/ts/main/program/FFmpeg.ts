@@ -25,8 +25,7 @@ export class FFmpeg extends Program {
 			const {env, fileSystem, shell, terminal} = this.system;
 			const ffmpegEnv:FFmpegEnv = {
 				FFMPEG_MAIN_URL: env.FFMPEG_MAIN_URL,
-				FFMPEG_WASM_URL: env.FFMPEG_WASM_URL,
-				FFMPEG_WORKER_URL: env.FFMPEG_WORKER_URL};
+				FFMPEG_WASM_URL: env.FFMPEG_WASM_URL};
 
 			for(const [variable, url] of Object.entries(ffmpegEnv)) {
 				const filename = UrlUtil.getFilename(url);

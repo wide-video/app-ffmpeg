@@ -88,8 +88,8 @@ export class Terminal implements ITerminal {
 	}
 
 	private print(line:string | Element, type:"stdout" | "stderr", kind:TerminalEntryKind | undefined) {
-		const body = document.body;
-		const isBottom = window.scrollY >= (body.scrollHeight - body.clientHeight - 10);
+		const {body, documentElement} = document;
+		const isBottom = window.scrollY >= (body.scrollHeight - documentElement.clientHeight - 10);
 		const element = DOM.div(type, line);
 		DOM.setDataset(element, KEY_ENTRY_KIND, kind);
 		this.log.append(element);

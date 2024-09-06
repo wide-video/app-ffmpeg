@@ -15,8 +15,7 @@ const root = document.getElementById("Terminal")!;
 async function init(command:Command, printCommand:boolean) {
 	const env:Env = {
 		FFMPEG_MAIN_URL: UrlUtil.ffmpegUrl(FFMPEG.FILES.main),
-		FFMPEG_WASM_URL: UrlUtil.ffmpegUrl(FFMPEG.FILES.wasm),
-		FFMPEG_WORKER_URL: UrlUtil.ffmpegUrl(FFMPEG.FILES.worker)};
+		FFMPEG_WASM_URL: UrlUtil.ffmpegUrl(FFMPEG.FILES.wasm)};
 	const terminal = new Terminal(root);
 	const shell = new Shell(env, terminal);
 	terminal.focus();

@@ -41,7 +41,6 @@ self.onmessage = async event => {
 		},
 		locateFile:url => {
 			if(url.endsWith(".wasm")) return env.FFMPEG_WASM_URL;
-			if(url.endsWith(".worker.js")) return env.FFMPEG_WORKER_URL;
 			return url;},
 		mainScriptUrlOrBlob:env.FFMPEG_MAIN_URL, wasmMemory});
 
