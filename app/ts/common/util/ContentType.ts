@@ -1,4 +1,4 @@
-export const MAP = <const>{
+export const MAP = {
 	"apng": "image/apng",
 	"avif": "image/avif",
 	"bmp": "image/bmp",
@@ -16,11 +16,11 @@ export const MAP = <const>{
 	"wav": "audio/wav",
 	"webm": "video/webm",
 	"webp": "image/webp",
-}
+} as const;
 
 export function getMimeType(path:string):string | undefined {
 	const index = path.lastIndexOf(".");
 	return index !== -1
-		? (<Record<string, string>>MAP)[path.substring(index + 1).toLowerCase()]
+		? (MAP as Record<string, string>)[path.substring(index + 1).toLowerCase()]
 		: undefined;
 }

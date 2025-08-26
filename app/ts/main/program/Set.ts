@@ -20,7 +20,7 @@ export class Set extends Program {
 		const value = args[1] ?? "";
 		if(!value)
 			throw "Value missing.";
-		(<any>env)[variable] = value;
+		(env as any)[variable] = value;
 	}
 
 	override help() {
@@ -30,8 +30,8 @@ export class Set extends Program {
 			examples: [
 				{description:"Display all variables:", command:name},
 				{description:"Set value into variable:", command:`${name} MY_VARIABLE MY_VALUE`},
-				{description:"Use LGPL FFmpeg:", command:<Command>Object.entries(FFMPEG.LGPL)
+				{description:"Use LGPL FFmpeg:", command:Object.entries(FFMPEG.LGPL)
 					.map(([variable, value]) => `${name} ${variable} ${value}`)
-					.join("\n")}]}));
+					.join("\n") as Command}]}));
 	}
 }

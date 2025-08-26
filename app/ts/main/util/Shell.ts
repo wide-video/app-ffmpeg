@@ -78,7 +78,8 @@ export class Shell implements IShell {
 		
 		try {
 			if(!parsed) {
-				printCommand ? terminal.stdout(Format.htmlCommand(command, undefined, true)) : undefined;
+				if(printCommand)
+					terminal.stdout(Format.htmlCommand(command, undefined, true));
 				throw "Invalid command";
 			}
 			if(controller)

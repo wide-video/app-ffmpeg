@@ -16,15 +16,9 @@
 			"group": "build",
 		},
 		{
-			"label": "Lint main",
+			"label": "Lint",
 			"type": "shell",
-			"command": "npx eslint --parser-options=project:./app/ts/main/tsconfig.json --ext .ts app/ts/main",
-			"group": "build"
-		},
-		{
-			"label": "Lint ffmpegWorker",
-			"type": "shell",
-			"command": "npx eslint --parser-options=project:./app/ts/ffmpegWorker/tsconfig.json --ext .ts app/ts/ffmpegWorker",
+			"command": "npx eslint -c ./app/ts/eslint.config.mjs",
 			"group": "build"
 		},
 		{

@@ -2,6 +2,6 @@ import { ProgramName } from "./ProgramName";
 
 export type ProgramAliasName = "man";
 
-export const MAP = <const>{
+export const MAP = {
 	"man": "help"
-} satisfies Record<ProgramAliasName, ProgramName>
+} as const satisfies Record<ProgramAliasName, ProgramName>

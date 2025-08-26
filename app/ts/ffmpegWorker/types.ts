@@ -20,6 +20,10 @@ declare global {
 		readonly callMain:(args:ReadonlyArray<string>) => number;
 		onExit:(code:number) => void;
 	}
+
+	interface Navigator {
+		readonly _:never;
+	}
 }
 
 export {}

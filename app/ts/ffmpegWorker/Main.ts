@@ -9,12 +9,12 @@ const post = (message:FFmpegWorkerOut, options?:StructuredSerializeOptions) => s
 self.onmessage = async event => {
 	const {args, blobs, env} = event.data as FFmpegWorkerIn;
 
-	// Worker is module so `importScripts(ffmpegUrl)` is not available...
+	// Worker is a module so `importScripts(ffmpegUrl)` is not available...
 	// but this little hack makes createFFmpeg available instead importScripts
-	(<any>self).define = (_:any, c:any) => (<any>self).createFFmpeg = c();
-	(<any>self).define.amd = true;
+	(self as any).define = (_:any, c:any) => (self as any).createFFmpeg = c();
+	(self as any).define.amd = true;
 	await import(env.FFMPEG_MAIN_URL);
-	delete (<any>self).define;
+	delete (self as any).define;
 
 	const wasmMemory = new WebAssembly.Memory({initial:2048, maximum:65536, shared:true});
 	const module = await createFFmpeg({
@@ -81,7 +81,7 @@ self.onmessage = async event => {
 				const content = FS.readFile(filename);
 				const type = ContentType.getMimeType(filename);
 				const options = type ? {type} : undefined;
-				files.push(new File([<ArrayBuffer>content.buffer], filename, options));
+				files.push(new File([content.buffer as ArrayBuffer], filename, options));
 			}
 		for(const ttyOutput of Object.values(ttyOutputs)) {
 			const file = ttyOutput.flush();

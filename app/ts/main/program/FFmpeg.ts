@@ -42,7 +42,7 @@ export class FFmpeg extends Program {
 						return reject(error);
 					}
 				}
-				(<any>ffmpegEnv)[variable] = BlobUtil.url(blob);
+				(ffmpegEnv as any)[variable] = BlobUtil.url(blob);
 			}
 
 			const worker = new Worker(WORKER_URL, {type:"module"});
