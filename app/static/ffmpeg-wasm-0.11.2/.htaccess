@@ -23,8 +23,8 @@ RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
 
 #Generated extra
 <FilesMatch "(ffmpeg-gpl-wv.js\.br)$">
-	Header set x-content-length 124739
+	Header set x-content-length 133971
 </FilesMatch>
 <FilesMatch "(ffmpeg-gpl.wasm\.br)$">
-	Header set x-content-length 40775938
+	Header set x-content-length 39788610
 </FilesMatch>

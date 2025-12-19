@@ -7,7 +7,7 @@ export const SOURCES_URL = "https://github.com/wide-video/app-ffmpeg/";
 export const WIDE_VIDEO = "wide.video";
 export const WIDE_VIDEO_URL = "https://wide.video/";
 
-const FFMPEG_VERSION = "0.11.0";
+const FFMPEG_VERSION = "0.11.2";
 export const FFMPEG = {
 	ORIGIN: "https://ffmpeg.org",
 	LICENSE: "https://github.com/FFmpeg/FFmpeg/blob/master/COPYING.GPLv3",
