@@ -2,7 +2,7 @@
 
 FFmpeg Online is a web-based application that allows you to run FFmpeg commands directly in your browser. The UI resembles a classic system terminal.
 
-To start using FFmpeg Online, simply visit [ffmpeg.wide.video](https://ffmpeg.wide.video).
+To start using FFmpeg Online, simply visit [ffmpeg.wide.video](https://ffmpeg.wide.video) or visit [wide.video](https://wide.video) to experience a full-featured multi-track editor powered by this engine.
 
 [<img src="app/static/image/og_image.jpg">](https://ffmpeg.wide.video)
 
